@@ -1,0 +1,190 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              Int      @id @default(autoincrement())
+  email           String   @unique
+  name            String
+  mobile          String?  @default("")
+  department      String?  @default("")
+  position        String?  @default("")
+  profileImageUrl String?  @default("")
+  role            UserRole @default(USER)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  login           Login?
+}
+
+model Login {
+  id        Int      @id @default(autoincrement())
+  password  String
+  salt      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    Int      @unique
+  User      User     @relation(fields: [userId], references: [id])
+}
+
+model Account {
+  id         Int         @id @default(autoincrement())
+  name       String      @unique
+  crn        String?     @default("")
+  memo       String?     @default("")
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  deletedAt  DateTime?
+  contacts   Contact[]
+  products   Product[]
+  workOrders WorkOrder[]
+}
+
+model Contact {
+  id        Int       @id @default(autoincrement())
+  isBase    Boolean?  @default(false)
+  title     String
+  phone     String?   @default("")
+  fax       String?   @default("")
+  email     String?   @default("")
+  address   String?   @default("")
+  memo      String?   @default("")
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  accountId Int?
+  account   Account?  @relation(fields: [accountId], references: [id])
+}
+
+model Product {
+  id                   Int         @id @default(autoincrement())
+  name                 String
+  thickness            Decimal     @db.Decimal(4, 3)
+  length               Decimal     @db.Decimal(4, 1)
+  width                Decimal     @db.Decimal(4, 1)
+  extColor             String?     @default("투명")
+  extIsAntistatic      Boolean?    @default(false)
+  extMemo              String?     @default("") @db.VarChar(255)
+  printSide            PrintSide?  @default(NONE)
+  printFrontColorCount Int?        @default(0)
+  printFrontColor      String?     @default("")
+  printFrontPosition   String?     @default("")
+  printBackColorCount  Int?        @default(0)
+  printBackColor       String?     @default("")
+  printBackPosition    String?     @default("")
+  printMemo            String?     @default("") @db.VarChar(255)
+  cutPosition          String?     @default("")
+  cutIsUltrasonic      Boolean?    @default(false)
+  cutIsForPowder       Boolean?    @default(false)
+  cutPunchCount        Int?        @default(0)
+  cutPunchSize         String?     @default("")
+  cutPunchPosition     String?     @default("")
+  cutMemo              String?     @default("") @db.VarChar(255)
+  packMaterial         String?     @default("마대")
+  packUnit             Int?        @default(0)
+  packCanDeliverAll    Boolean?    @default(false)
+  packMemo             String?     @default(dbgenerated("''::text")) @db.VarChar(255)
+  createdAt            DateTime    @default(now())
+  updatedAt            DateTime    @updatedAt
+  deletedAt            DateTime?
+  accountId            Int?
+  account              Account?    @relation(fields: [accountId], references: [id])
+  images               Image[]
+  workOrders           WorkOrder[]
+  plates               Plate[]
+}
+
+model Image {
+  id        Int      @id @default(autoincrement())
+  fileName  String
+  imageUrl  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  productId Int?
+  product   Product? @relation(fields: [productId], references: [id])
+}
+
+model Plate {
+  id        Int           @id @default(autoincrement())
+  round     Decimal       @db.Decimal(4, 1)
+  length    Decimal       @db.Decimal(4, 1)
+  name      String?       @default("")
+  material  PlateMaterial @default(STEEL)
+  location  String?       @default("")
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  deletedAt DateTime?
+  memo      String?       @default("") @db.VarChar(255)
+  products  Product[]
+}
+
+model WorkOrderSeq {
+  id  String @id
+  seq Int    @default(0)
+}
+
+model WorkOrder {
+  id                String          @id
+  orderedAt         DateTime        @default(now())
+  orderUpdatedAt    DateTime        @updatedAt
+  deliverBy         DateTime
+  orderQuantity     Int
+  isUrgent          Boolean         @default(false)
+  shouldBePunctual  Boolean         @default(false)
+  plateStatus       PlateStatus     @default(CONFIRM)
+  isPlateReady      Boolean         @default(false)
+  deliveryMethod    DeliveryMethod  @default(TBD)
+  workMemo          String?         @default("") @db.VarChar(255)
+  deliveryMemo      String?         @default("") @db.VarChar(255)
+  workOrderStatus   WorkOrderStatus @default(NOT_STARTED)
+  completedAt       DateTime?
+  completedQuantity Int?
+  deliveredAt       DateTime?
+  deliveredQuantity Int?
+  accountId         Int
+  productId         Int
+  account           Account         @relation(fields: [accountId], references: [id])
+  product           Product         @relation(fields: [productId], references: [id])
+}
+
+enum UserRole {
+  USER
+  MANAGER
+  ADMIN
+}
+
+enum PrintSide {
+  NONE
+  SINGLE
+  DOUBLE
+}
+
+enum PlateMaterial {
+  BRASS
+  STEEL
+}
+
+enum PlateStatus {
+  NEW
+  UPDATE
+  CONFIRM
+}
+
+enum DeliveryMethod {
+  TBD
+  COURIER
+  DIRECT
+  EXPRESS
+}
+
+enum WorkOrderStatus {
+  NOT_STARTED
+  EXTRUDING
+  PRINTING
+  CUTTING
+  COMPLETED
+}
