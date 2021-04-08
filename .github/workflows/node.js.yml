@@ -36,3 +36,5 @@ jobs:
         run: yarn db:migrate
       - name: Generate Prisma Client
         run: yarn db:generate
+      - name: Restart App
+        run: pm2 restart kwangil-api
