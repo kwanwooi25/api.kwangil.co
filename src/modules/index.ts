@@ -1,19 +1,19 @@
 import { Router } from 'express';
-import { errors } from 'celebrate';
-import { requestLogger } from '~middlewares/requestLogger';
-import { isAuthorized } from '~middlewares/isAuthorized';
-import { handleError } from '~utils/error';
-import { authRouter } from './auth/routes';
-import { userRouter } from './user/routes';
 import { accountRouter } from './account/routes';
-import { productRouter } from './product/routes';
+import { authRouter } from './auth/routes';
+import { errors } from 'celebrate';
+import { handleError } from '~utils/error';
+import { isAuthorized } from '~middlewares/isAuthorized';
 import { plateRouter } from './plate/routes';
+import { productRouter } from './product/routes';
+import { requestLogger } from '~middlewares/requestLogger';
+import { userRouter } from './user/routes';
 import { workOrderRouter } from './workOrder/routes';
 
 export const getRoutes = (): Router => {
   const router: Router = Router();
 
-  router.get('/', (req, res) => res.json({ message: 'Welcome to @kwangil.co/api!' }));
+  router.get('/', (req, res) => res.json({ message: 'Welcome to api.kwangil.co!' }));
 
   router.use(requestLogger);
 
