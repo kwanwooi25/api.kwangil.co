@@ -32,8 +32,8 @@ jobs:
           echo JWT_EXPIRES_IN=${{ secrets.JWT_EXPIRES_IN }} >> .env
       - name: Install Dependencies
         run: yarn
-      - name: Migrate Database
-        run: yarn db:migrate
+      - name: Updating Database
+        run: yarn db:push
       - name: Generate Prisma Client
         run: yarn db:generate
       - name: Restart App
