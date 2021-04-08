@@ -7,10 +7,12 @@
   "private": true,
   "scripts": {
     "start": "nodemon",
-    "prisma:migrate": "npx prisma migrate dev --preview-feature",
-    "prisma:generate": "npx prisma generate",
-    "prisma:introspect": "npx prisma introspect",
-    "prisma:client": "npx prisma studio"
+    "build": "npx prisma generate && tsc --build tsconfig.json",
+    "db:push": "npx prisma db push --preview-feature",
+    "db:migrate": "npx prisma migrate dev --preview-feature",
+    "db:generate": "npx prisma generate",
+    "db:introspect": "npx prisma introspect",
+    "db:client": "npx prisma studio"
   },
   "dependencies": {
     "@prisma/client": "^2.17.0",
