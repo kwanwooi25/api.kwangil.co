@@ -24,6 +24,8 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
+      - name: Stop App
+        run: pm2 stop kwangil-api
       - name: Generating .env file
         run: |
           touch .env
@@ -36,5 +38,5 @@ jobs:
         run: yarn db:push
       - name: Generate Prisma Client
         run: yarn db:generate
-      - name: Restart App
-        run: pm2 restart kwangil-api
+      - name: Start App
+        run: pm2 start yarn --name kwangil-api -- start
