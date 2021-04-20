@@ -1,19 +1,20 @@
-import { Service } from 'typedi';
-import { Prisma, Product } from '@prisma/client';
-import { DEFAULT_LIMIT, ErrorName, ProductThickness, ProductLength, ProductWidth } from '~const';
-import { logger } from '~logger';
-import { prisma } from '~prisma';
-import { GetListResponse } from '~interfaces/common';
+import { DEFAULT_LIMIT, ErrorName, ProductLength, ProductThickness, ProductWidth } from '~const';
 import {
   FailedProductCreationAttributes,
   GetProductsQueryParams,
   ProductCreateInput,
+  ProductUpdateInput,
   ProductsCreateInput,
   ProductsCreationResponse,
-  ProductUpdateInput,
 } from '~modules/product/interface';
+import { Prisma, Product } from '@prisma/client';
+
 import AccountService from '~modules/account/service';
+import { GetListResponse } from '~interfaces/common';
+import { Service } from 'typedi';
 import { getHasMore } from '~utils/response';
+import { logger } from '~logger';
+import { prisma } from '~prisma';
 
 @Service()
 export default class ProductService {
@@ -177,7 +178,7 @@ export default class ProductService {
           ...restUserInput,
           images: {
             create: imagesToCreate,
-            updateMany: images?.map(({ id, ...image }) => ({ where: { id }, data: image })),
+            updateMany: images?.map(({ id, productId, ...image }) => ({ where: { id }, data: image })),
             deleteMany: imageIdsToDelete?.map((id) => ({ id })),
           },
         },
