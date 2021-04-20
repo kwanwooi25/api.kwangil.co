@@ -1,16 +1,17 @@
-import { Service } from 'typedi';
 import { Account, Prisma } from '@prisma/client';
-import { DEFAULT_LIMIT, ErrorName } from '~const';
-import { logger } from '~logger';
-import { prisma } from '~prisma';
-import { GetListResponse } from '~interfaces/common';
-import { getHasMore } from '~utils/response';
 import {
-  AccountsCreationResponse,
   AccountUpdateInput,
+  AccountsCreationResponse,
   FailedAccountCreationAttributes,
   GetAccountsQueryParams,
 } from './interface';
+import { DEFAULT_LIMIT, ErrorName } from '~const';
+
+import { GetListResponse } from '~interfaces/common';
+import { Service } from 'typedi';
+import { getHasMore } from '~utils/response';
+import { logger } from '~logger';
+import { prisma } from '~prisma';
 
 @Service()
 export default class AccountService {
@@ -33,7 +34,7 @@ export default class AccountService {
 
   public async getAccounts(query: GetAccountsQueryParams): Promise<GetListResponse<Account>> {
     const { offset = 0, limit = DEFAULT_LIMIT, searchText = '', withContacts = false } = query;
-    const where = { name: { contains: searchText } };
+    const where = { name: { contains: searchText, mode: Prisma.QueryMode.insensitive } };
 
     const [count, rows] = await Promise.all([
       prisma.account.count({ where }),
@@ -61,7 +62,10 @@ export default class AccountService {
     const { searchText = '', withContacts = false } = query;
     const rows = await prisma.account.findMany({
       where: {
-        name: { contains: searchText },
+        name: {
+          contains: searchText,
+          mode: Prisma.QueryMode.insensitive,
+        },
       },
       orderBy: { name: 'asc' },
       include: {
