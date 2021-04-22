@@ -208,10 +208,14 @@ export default class ProductService {
         },
         name: { contains: query.name, mode: Prisma.QueryMode.insensitive },
         extColor: { contains: query.extColor, mode: Prisma.QueryMode.insensitive },
-        OR: {
-          printFrontColor: { contains: query.printColor, mode: Prisma.QueryMode.insensitive },
-          printBackColor: { contains: query.printColor, mode: Prisma.QueryMode.insensitive },
-        },
+        OR: [
+          {
+            printFrontColor: { contains: query.printColor, mode: Prisma.QueryMode.insensitive },
+          },
+          {
+            printBackColor: { contains: query.printColor, mode: Prisma.QueryMode.insensitive },
+          },
+        ],
         thickness: {
           gte: minThickness.toFixed(3),
           lte: maxThickness.toFixed(3),
