@@ -11,6 +11,7 @@ import {
   createWorkOrder,
   createWorkOrders,
   deleteWorkOrders,
+  getAllWorkOrders,
   getWorkOrderById,
   getWorkOrders,
   updateWorkOrder,
@@ -20,6 +21,7 @@ import {
 const router: Router = Router();
 
 router.get('/list', getWorkOrdersValidation, getWorkOrders);
+router.get('/list/all', getWorkOrdersValidation, getAllWorkOrders);
 router.get('/:id', getWorkOrderById);
 
 router.post('/bulk', createWorkOrdersValidation, createWorkOrders);

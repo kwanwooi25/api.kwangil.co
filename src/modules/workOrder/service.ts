@@ -49,6 +49,18 @@ export default class WorkOrderService {
     return { count, rows, hasMore };
   }
 
+  public async getAllWorkOrders(query: GetWorkOrdersQueryParams): Promise<GetListResponse<WorkOrder>> {
+    const where = this.generateWhereClause(query);
+
+    const rows = await prisma.workOrder.findMany({
+      where,
+      include: this.baseInclude,
+      orderBy: { id: 'asc' },
+    });
+
+    return { rows };
+  }
+
   public async createWorkOrder(userInput: WorkOrderCreateInput): Promise<WorkOrder | void> {
     try {
       const id = await this.generateWorkOrderId(userInput);

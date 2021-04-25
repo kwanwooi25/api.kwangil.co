@@ -22,6 +22,15 @@ export const getWorkOrders = async (req: Request, res: Response, next: NextFunct
   }
 };
 
+export const getAllWorkOrders = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const data = await Container.get(WorkOrderService).getAllWorkOrders(req.query);
+    return res.status(HttpStatus.OK).json(data);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const createWorkOrder = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const createdWorkOrder = await Container.get(WorkOrderService).createWorkOrder(req.body);
