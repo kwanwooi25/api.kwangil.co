@@ -209,6 +209,7 @@ export default class WorkOrderService {
     product: {
       include: {
         account: true,
+        images: true,
       },
     },
   };
