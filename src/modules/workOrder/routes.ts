@@ -1,27 +1,20 @@
 import { Router } from 'express';
+
 import {
-  createWorkOrdersValidation,
-  createWorkOrderValidation,
-  deleteWorkOrdersValidation,
-  getWorkOrdersValidation,
-  updateWorkOrderValidation,
-  updateWorkOrdersValidation,
-} from './validation';
-import {
-  createWorkOrder,
-  createWorkOrders,
-  deleteWorkOrders,
-  getAllWorkOrders,
-  getWorkOrderById,
-  getWorkOrders,
-  updateWorkOrder,
-  updateWorkOrders,
+    createWorkOrder, createWorkOrders, deleteWorkOrders, getAllWorkOrders, getWorkOrderById,
+    getWorkOrderCount, getWorkOrders, updateWorkOrder, updateWorkOrders
 } from './controller';
+import {
+    createWorkOrdersValidation, createWorkOrderValidation, deleteWorkOrdersValidation,
+    getWorkOrderCountValidation, getWorkOrdersValidation, updateWorkOrdersValidation,
+    updateWorkOrderValidation
+} from './validation';
 
 const router: Router = Router();
 
 router.get('/list', getWorkOrdersValidation, getWorkOrders);
 router.get('/list/all', getWorkOrdersValidation, getAllWorkOrders);
+router.get('/count', getWorkOrderCountValidation, getWorkOrderCount);
 router.get('/:id', getWorkOrderById);
 
 router.post('/bulk', createWorkOrdersValidation, createWorkOrders);

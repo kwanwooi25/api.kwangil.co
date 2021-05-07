@@ -1,6 +1,7 @@
-import { Request, Response, NextFunction } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import Container from 'typedi';
 import { HttpStatus } from '~const';
+
 import { WorkOrderUpdateInput } from './interface';
 import WorkOrderService from './service';
 
@@ -16,6 +17,15 @@ export const getWorkOrderById = async (req: Request, res: Response, next: NextFu
 export const getWorkOrders = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const data = await Container.get(WorkOrderService).getWorkOrders(req.query);
+    return res.status(HttpStatus.OK).json(data);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getWorkOrderCount = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const data = await Container.get(WorkOrderService).getWorkOrderCount(req.query);
     return res.status(HttpStatus.OK).json(data);
   } catch (error) {
     next(error);

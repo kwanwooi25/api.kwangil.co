@@ -1,6 +1,7 @@
-import { DeliveryMethod, PlateStatus, WorkOrderStatus } from '@prisma/client';
 import { celebrate, Joi, Segments } from 'celebrate';
 import { DEFAULT_LIMIT } from '~const';
+
+import { DeliveryMethod, PlateStatus, WorkOrderStatus } from '@prisma/client';
 
 export const getWorkOrdersValidation = celebrate({
   [Segments.QUERY]: Joi.object({
@@ -10,6 +11,12 @@ export const getWorkOrdersValidation = celebrate({
     accountName: Joi.string().allow('').default(''),
     productName: Joi.string().allow('').default(''),
     includeCompleted: Joi.boolean().default(false),
+  }),
+});
+
+export const getWorkOrderCountValidation = celebrate({
+  [Segments.QUERY]: Joi.object({
+    orderedAt: Joi.array().items(Joi.date()),
   }),
 });
 

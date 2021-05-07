@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client';
+import { PrintSide, Prisma, WorkOrderStatus } from '@prisma/client';
 
 export interface GetWorkOrdersQueryParams {
   offset?: number;
@@ -7,6 +7,10 @@ export interface GetWorkOrdersQueryParams {
   accountName?: string;
   productName?: string;
   includeCompleted?: boolean;
+}
+
+export interface GetWorkOrderCountQueryParams {
+  orderedAt?: (Date | string)[];
 }
 
 export interface WorkOrderCreateInput extends Omit<Prisma.WorkOrderUncheckedCreateInput, 'id'> {
@@ -30,4 +34,9 @@ export interface FailedWorkOrderCreationAttributes extends WorkOrdersCreateInput
 export interface WorkOrdersCreationResponse {
   createdCount: number;
   failedList: FailedWorkOrderCreationAttributes[];
+}
+
+export interface WorkOrderCount {
+  byStatus: { [key in WorkOrderStatus]: number };
+  byPrintSide: { [key in PrintSide]: number };
 }

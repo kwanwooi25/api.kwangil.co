@@ -1,4 +1,3 @@
-import { Prisma, WorkOrder } from '@prisma/client';
 import { format } from 'date-fns';
 import { Service } from 'typedi';
 import { DEFAULT_LIMIT, ErrorName } from '~const';
@@ -8,13 +7,13 @@ import ProductService from '~modules/product/service';
 import { prisma } from '~prisma';
 import { getHasMore } from '~utils/response';
 import { getDefaultOrderedAtRange } from '~utils/workOrder';
+
+import { PrintSide, Prisma, WorkOrder, WorkOrderStatus } from '@prisma/client';
+
 import {
-  WorkOrderCreateInput,
-  GetWorkOrdersQueryParams,
-  WorkOrdersCreateInput,
-  WorkOrdersCreationResponse,
-  FailedWorkOrderCreationAttributes,
-  WorkOrderUpdateInput,
+    FailedWorkOrderCreationAttributes, GetWorkOrderCountQueryParams, GetWorkOrdersQueryParams,
+    WorkOrderCount, WorkOrderCreateInput, WorkOrdersCreateInput, WorkOrdersCreationResponse,
+    WorkOrderUpdateInput
 } from './interface';
 
 @Service()
@@ -59,6 +58,34 @@ export default class WorkOrderService {
     });
 
     return { rows };
+  }
+
+  public async getWorkOrderCount({ orderedAt }: GetWorkOrderCountQueryParams): Promise<WorkOrderCount> {
+    let where: Prisma.WorkOrderWhereInput = {};
+    if (!!orderedAt && orderedAt.length >= 2) {
+      where = {
+        orderedAt: {
+          gte: orderedAt[0],
+          lte: orderedAt[1],
+        },
+      };
+    }
+
+    const [NOT_STARTED, EXTRUDING, PRINTING, CUTTING, COMPLETED, NONE, SINGLE, DOUBLE] = await Promise.all([
+      await prisma.workOrder.count({ where: { ...where, workOrderStatus: { equals: WorkOrderStatus.NOT_STARTED } } }),
+      await prisma.workOrder.count({ where: { ...where, workOrderStatus: { equals: WorkOrderStatus.EXTRUDING } } }),
+      await prisma.workOrder.count({ where: { ...where, workOrderStatus: { equals: WorkOrderStatus.PRINTING } } }),
+      await prisma.workOrder.count({ where: { ...where, workOrderStatus: { equals: WorkOrderStatus.CUTTING } } }),
+      await prisma.workOrder.count({ where: { ...where, workOrderStatus: { equals: WorkOrderStatus.COMPLETED } } }),
+      await prisma.workOrder.count({ where: { ...where, product: { printSide: { equals: PrintSide.NONE } } } }),
+      await prisma.workOrder.count({ where: { ...where, product: { printSide: { equals: PrintSide.SINGLE } } } }),
+      await prisma.workOrder.count({ where: { ...where, product: { printSide: { equals: PrintSide.DOUBLE } } } }),
+    ]);
+
+    return {
+      byStatus: { NOT_STARTED, EXTRUDING, PRINTING, CUTTING, COMPLETED },
+      byPrintSide: { NONE, SINGLE, DOUBLE },
+    };
   }
 
   public async createWorkOrder(userInput: WorkOrderCreateInput): Promise<WorkOrder | void> {
