@@ -1,6 +1,6 @@
-import { format } from 'date-fns';
+import { addBusinessDays, format } from 'date-fns';
 import { Service } from 'typedi';
-import { DEFAULT_LIMIT, ErrorName } from '~const';
+import { DATE_FORMAT, DEFAULT_LIMIT, ErrorName } from '~const';
 import { GetListResponse } from '~interfaces/common';
 import { logger } from '~logger';
 import ProductService from '~modules/product/service';
@@ -11,8 +11,9 @@ import { getDefaultOrderedAtRange } from '~utils/workOrder';
 import { PrintSide, Prisma, WorkOrder, WorkOrderStatus } from '@prisma/client';
 
 import {
-    FailedWorkOrderCreationAttributes, GetWorkOrderCountQueryParams, GetWorkOrdersQueryParams,
-    WorkOrderCount, WorkOrderCreateInput, WorkOrdersCreateInput, WorkOrdersCreationResponse,
+    FailedWorkOrderCreationAttributes, GetWorkOrderCountQueryParams,
+    GetWorkOrdersByDeadlineQueryParams, GetWorkOrdersQueryParams, WorkOrderCount,
+    WorkOrderCreateInput, WorkOrdersByDeadline, WorkOrdersCreateInput, WorkOrdersCreationResponse,
     WorkOrderUpdateInput
 } from './interface';
 
@@ -58,6 +59,40 @@ export default class WorkOrderService {
     });
 
     return { rows };
+  }
+
+  public async getWorkOrdersByDeadline(query: GetWorkOrdersByDeadlineQueryParams): Promise<WorkOrdersByDeadline> {
+    const deadline = query.deadline || format(new Date(), DATE_FORMAT);
+
+    const [overdue, imminent] = await Promise.all([
+      await prisma.workOrder.findMany({
+        where: {
+          deliverBy: {
+            lt: new Date(deadline),
+          },
+          completedAt: {
+            equals: null,
+          },
+        },
+        include: this.baseInclude,
+        orderBy: [{ deliverBy: 'asc' }, { orderedAt: 'asc' }],
+      }),
+      await prisma.workOrder.findMany({
+        where: {
+          deliverBy: {
+            gte: new Date(deadline),
+            lte: addBusinessDays(new Date(deadline), 3),
+          },
+          completedAt: {
+            equals: null,
+          },
+        },
+        include: this.baseInclude,
+        orderBy: [{ deliverBy: 'asc' }, { orderedAt: 'asc' }],
+      }),
+    ]);
+
+    return { overdue, imminent };
   }
 
   public async getWorkOrderCount({ orderedAt }: GetWorkOrderCountQueryParams): Promise<WorkOrderCount> {

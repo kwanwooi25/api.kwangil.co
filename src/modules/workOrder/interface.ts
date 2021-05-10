@@ -1,4 +1,4 @@
-import { PrintSide, Prisma, WorkOrderStatus } from '@prisma/client';
+import { PrintSide, Prisma, WorkOrder, WorkOrderStatus } from '@prisma/client';
 
 export interface GetWorkOrdersQueryParams {
   offset?: number;
@@ -7,6 +7,10 @@ export interface GetWorkOrdersQueryParams {
   accountName?: string;
   productName?: string;
   includeCompleted?: boolean;
+}
+
+export interface GetWorkOrdersByDeadlineQueryParams {
+  deadline?: Date | string;
 }
 
 export interface GetWorkOrderCountQueryParams {
@@ -34,6 +38,11 @@ export interface FailedWorkOrderCreationAttributes extends WorkOrdersCreateInput
 export interface WorkOrdersCreationResponse {
   createdCount: number;
   failedList: FailedWorkOrderCreationAttributes[];
+}
+
+export interface WorkOrdersByDeadline {
+  overdue: WorkOrder[];
+  imminent: WorkOrder[];
 }
 
 export interface WorkOrderCount {

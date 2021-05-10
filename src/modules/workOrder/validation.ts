@@ -14,6 +14,12 @@ export const getWorkOrdersValidation = celebrate({
   }),
 });
 
+export const getWorkOrdersByDeadlineValidation = celebrate({
+  [Segments.QUERY]: Joi.object({
+    deadline: Joi.date(),
+  }),
+});
+
 export const getWorkOrderCountValidation = celebrate({
   [Segments.QUERY]: Joi.object({
     orderedAt: Joi.array().items(Joi.date()),
