@@ -8,7 +8,7 @@ import { prisma } from '~prisma';
 import { getHasMore } from '~utils/response';
 import { getDefaultOrderedAtRange } from '~utils/workOrder';
 
-import { PrintSide, Prisma, WorkOrder, WorkOrderStatus } from '@prisma/client';
+import { PlateStatus, PrintSide, Prisma, WorkOrder, WorkOrderStatus } from '@prisma/client';
 
 import {
     FailedWorkOrderCreationAttributes, GetWorkOrderCountQueryParams,
@@ -93,6 +93,24 @@ export default class WorkOrderService {
     ]);
 
     return { overdue, imminent };
+  }
+
+  public async getWorkOrdersNeedPlate(): Promise<WorkOrder[]> {
+    return await prisma.workOrder.findMany({
+      where: {
+        plateStatus: {
+          not: PlateStatus.CONFIRM,
+        },
+        isPlateReady: {
+          equals: false,
+        },
+        completedAt: {
+          equals: null,
+        },
+      },
+      include: this.baseInclude,
+      orderBy: { id: 'asc' },
+    });
   }
 
   public async getWorkOrderCount({ orderedAt }: GetWorkOrderCountQueryParams): Promise<WorkOrderCount> {

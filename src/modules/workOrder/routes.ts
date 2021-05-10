@@ -2,7 +2,8 @@ import { Router } from 'express';
 
 import {
     createWorkOrder, createWorkOrders, deleteWorkOrders, getAllWorkOrders, getWorkOrderById,
-    getWorkOrderCount, getWorkOrders, getWorkOrdersByDeadline, updateWorkOrder, updateWorkOrders
+    getWorkOrderCount, getWorkOrders, getWorkOrdersByDeadline, getWorkOrdersNeedPlate,
+    updateWorkOrder, updateWorkOrders
 } from './controller';
 import {
     createWorkOrdersValidation, createWorkOrderValidation, deleteWorkOrdersValidation,
@@ -15,6 +16,7 @@ const router: Router = Router();
 router.get('/list', getWorkOrdersValidation, getWorkOrders);
 router.get('/list/all', getWorkOrdersValidation, getAllWorkOrders);
 router.get('/list/deadline', getWorkOrdersByDeadline);
+router.get('/list/needPlate', getWorkOrdersNeedPlate);
 router.get('/count', getWorkOrderCountValidation, getWorkOrderCount);
 router.get('/:id', getWorkOrderById);
 

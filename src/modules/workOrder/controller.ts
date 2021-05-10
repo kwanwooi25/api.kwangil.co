@@ -32,6 +32,15 @@ export const getWorkOrdersByDeadline = async (req: Request, res: Response, next:
   }
 };
 
+export const getWorkOrdersNeedPlate = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const data = await Container.get(WorkOrderService).getWorkOrdersNeedPlate();
+    return res.status(HttpStatus.OK).json(data);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const getWorkOrderCount = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const data = await Container.get(WorkOrderService).getWorkOrderCount(req.query);
