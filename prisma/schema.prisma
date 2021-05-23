@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["orderByRelation"]
 }
 
@@ -97,6 +97,7 @@ model Product {
   images               Image[]
   workOrders           WorkOrder[]
   plates               Plate[]
+  stock                Stock?
 }
 
 model Image {
@@ -107,6 +108,26 @@ model Image {
   updatedAt DateTime @updatedAt
   productId Int?
   product   Product? @relation(fields: [productId], references: [id])
+}
+
+model Stock {
+  id        Int            @id @default(autoincrement())
+  balance   Int
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  productId Int
+  product   Product        @relation(fields: [productId], references: [id])
+  history   StockHistory[]
+}
+
+model StockHistory {
+  id        Int              @id @default(autoincrement())
+  type      StockHistoryType
+  quantity  Int
+  balance   Int
+  createdAt DateTime         @default(now())
+  stockId   Int
+  stock     Stock            @relation(fields: [stockId], references: [id])
 }
 
 model Plate {
@@ -188,4 +209,12 @@ enum WorkOrderStatus {
   PRINTING
   CUTTING
   COMPLETED
+}
+
+enum StockHistoryType {
+  CREATED
+  MANUFACTURED
+  DELIVERED
+  DISPOSAL
+  STOCKTAKING
 }

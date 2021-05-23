@@ -1,20 +1,16 @@
-import { DEFAULT_LIMIT, ErrorName, ProductLength, ProductThickness, ProductWidth } from '~const';
-import {
-  FailedProductCreationAttributes,
-  GetProductsQueryParams,
-  ProductCreateInput,
-  ProductUpdateInput,
-  ProductsCreateInput,
-  ProductsCreationResponse,
-} from '~modules/product/interface';
-import { Prisma, Product } from '@prisma/client';
-
-import AccountService from '~modules/account/service';
-import { GetListResponse } from '~interfaces/common';
 import { Service } from 'typedi';
-import { getHasMore } from '~utils/response';
+import { DEFAULT_LIMIT, ErrorName, ProductLength, ProductThickness, ProductWidth } from '~const';
+import { GetListResponse } from '~interfaces/common';
 import { logger } from '~logger';
+import AccountService from '~modules/account/service';
+import {
+    FailedProductCreationAttributes, GetProductsQueryParams, ProductCreateInput,
+    ProductsCreateInput, ProductsCreationResponse, ProductUpdateInput
+} from '~modules/product/interface';
 import { prisma } from '~prisma';
+import { getHasMore } from '~utils/response';
+
+import { Prisma, Product } from '@prisma/client';
 
 @Service()
 export default class ProductService {
@@ -28,6 +24,7 @@ export default class ProductService {
         account: true,
         images: true,
         plates: true,
+        stock: true,
       },
     });
   }
@@ -78,6 +75,7 @@ export default class ProductService {
         include: {
           account: true,
           images: true,
+          stock: true,
         },
         orderBy: [
           { account: { name: 'asc' } },

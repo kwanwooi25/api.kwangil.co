@@ -1,12 +1,14 @@
+import { errors } from 'celebrate';
 import { Router } from 'express';
+import { isAuthorized } from '~middlewares/isAuthorized';
+import { requestLogger } from '~middlewares/requestLogger';
+import { handleError } from '~utils/error';
+
 import { accountRouter } from './account/routes';
 import { authRouter } from './auth/routes';
-import { errors } from 'celebrate';
-import { handleError } from '~utils/error';
-import { isAuthorized } from '~middlewares/isAuthorized';
 import { plateRouter } from './plate/routes';
 import { productRouter } from './product/routes';
-import { requestLogger } from '~middlewares/requestLogger';
+import { stockRouter } from './stock/routes';
 import { userRouter } from './user/routes';
 import { workOrderRouter } from './workOrder/routes';
 
@@ -23,6 +25,7 @@ export const getRoutes = (): Router => {
   router.use('/product', isAuthorized, productRouter);
   router.use('/plate', isAuthorized, plateRouter);
   router.use('/workOrder', isAuthorized, workOrderRouter);
+  router.use('/stock', isAuthorized, stockRouter);
 
   router.use(errors());
   router.use(handleError);
