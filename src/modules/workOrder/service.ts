@@ -8,13 +8,15 @@ import { prisma } from '~prisma';
 import { getHasMore } from '~utils/response';
 import { getDefaultOrderedAtRange } from '~utils/workOrder';
 
-import { PlateStatus, PrintSide, Prisma, WorkOrder, WorkOrderStatus } from '@prisma/client';
+import {
+    PlateStatus, PrintSide, Prisma, Stock, StockHistoryType, WorkOrder, WorkOrderStatus
+} from '@prisma/client';
 
 import {
     FailedWorkOrderCreationAttributes, GetWorkOrderCountQueryParams,
-    GetWorkOrdersByDeadlineQueryParams, GetWorkOrdersQueryParams, WorkOrderCount,
-    WorkOrderCreateInput, WorkOrdersByDeadline, WorkOrdersCreateInput, WorkOrdersCreationResponse,
-    WorkOrderUpdateInput
+    GetWorkOrdersByDeadlineQueryParams, GetWorkOrdersQueryParams, WorkOrderCompleteInput,
+    WorkOrderCount, WorkOrderCreateInput, WorkOrdersByDeadline, WorkOrdersCreateInput,
+    WorkOrdersCreationResponse, WorkOrderUpdateInput
 } from './interface';
 
 @Service()
@@ -208,6 +210,62 @@ export default class WorkOrderService {
     } catch (error) {
       throw error;
     }
+  }
+
+  public async completeWorkOrders(workOrders: WorkOrderCompleteInput[]): Promise<WorkOrder[]> {
+    return await Promise.all(
+      workOrders.map(async ({ id, completedQuantity = 0, completedAt, productId }) => {
+        const workOrder = await prisma.workOrder.findUnique({ where: { id } });
+        let stock = await prisma.stock.findFirst({ where: { productId } });
+        const quantity = completedQuantity - (workOrder?.completedQuantity || 0);
+
+        if (quantity === 0) {
+          return workOrder as WorkOrder;
+        }
+
+        if (!stock) {
+          stock = await prisma.stock.create({
+            data: {
+              balance: 0,
+              product: { connect: { id: productId } },
+              history: {
+                create: {
+                  type: StockHistoryType.CREATED,
+                  quantity: 0,
+                  balance: 0,
+                },
+              },
+            },
+          });
+        }
+
+        const lastStockHistory = await prisma.stockHistory.findFirst({
+          where: { stockId: stock?.id },
+          orderBy: { createdAt: 'desc' },
+        });
+        const balance = lastStockHistory!.balance + quantity;
+
+        await prisma.stock.update({
+          where: { id: stock.id },
+          data: {
+            balance,
+            history: {
+              create: {
+                type: StockHistoryType.MANUFACTURED,
+                quantity,
+                balance,
+              },
+            },
+          },
+        });
+
+        return await prisma.workOrder.update({
+          where: { id },
+          data: { completedAt, completedQuantity },
+          include: this.baseInclude,
+        });
+      })
+    );
   }
 
   public async deleteWorkOrders(ids: string[]): Promise<number> {

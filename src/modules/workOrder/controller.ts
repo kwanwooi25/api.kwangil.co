@@ -106,6 +106,15 @@ export const updateWorkOrders = async (req: Request, res: Response, next: NextFu
   }
 };
 
+export const completeWorkOrders = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const updatedWorkOrders = await Container.get(WorkOrderService).completeWorkOrders(req.body);
+    return res.status(HttpStatus.OK).json(updatedWorkOrders);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const deleteWorkOrders = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const deletedCount = await Container.get(WorkOrderService).deleteWorkOrders(req.query.ids as string[]);

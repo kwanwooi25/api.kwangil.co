@@ -125,6 +125,17 @@ export const updateWorkOrdersValidation = celebrate({
     .required(),
 });
 
+export const completeWorkOrdersValidation = celebrate({
+  [Segments.BODY]: Joi.array().items(
+    Joi.object({
+      id: Joi.string().required(),
+      completedAt: Joi.date().allow(null),
+      completedQuantity: Joi.number().integer().allow(null).default(0),
+      productId: Joi.number().integer(),
+    })
+  ),
+});
+
 export const deleteWorkOrdersValidation = celebrate({
   [Segments.QUERY]: Joi.object({
     ids: Joi.array().items(Joi.string()).required(),

@@ -31,6 +31,13 @@ export interface WorkOrdersCreateInput extends Omit<Prisma.WorkOrderUncheckedCre
 
 export interface WorkOrderUpdateInput extends Omit<Prisma.WorkOrderUpdateInput, 'product'> {}
 
+export interface WorkOrderCompleteInput {
+  id: string;
+  completedAt: Date | string | null;
+  completedQuantity: number;
+  productId: number;
+}
+
 export interface FailedWorkOrderCreationAttributes extends WorkOrdersCreateInput {
   reason: string;
 }
