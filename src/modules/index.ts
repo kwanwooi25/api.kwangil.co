@@ -6,6 +6,7 @@ import { handleError } from '~utils/error';
 
 import { accountRouter } from './account/routes';
 import { authRouter } from './auth/routes';
+import { deliveryRouter } from './delivery/routes';
 import { plateRouter } from './plate/routes';
 import { productRouter } from './product/routes';
 import { stockRouter } from './stock/routes';
@@ -26,6 +27,7 @@ export const getRoutes = (): Router => {
   router.use('/plate', isAuthorized, plateRouter);
   router.use('/workOrder', isAuthorized, workOrderRouter);
   router.use('/stock', isAuthorized, stockRouter);
+  router.use('/delivery', isAuthorized, deliveryRouter);
 
   router.use(errors());
   router.use(handleError);

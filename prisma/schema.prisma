@@ -98,6 +98,7 @@ model Product {
   workOrders           WorkOrder[]
   plates               Plate[]
   stock                Stock?
+  deliveries           Delivery[]
 }
 
 model Image {
@@ -171,6 +172,20 @@ model WorkOrder {
   productId         Int
   account           Account         @relation(fields: [accountId], references: [id])
   product           Product         @relation(fields: [productId], references: [id])
+  delivery          Delivery?
+}
+
+model Delivery {
+  id          Int            @id @default(autoincrement())
+  date        DateTime
+  method      DeliveryMethod
+  quantity    Int
+  isDelivered Boolean        @default(false)
+  memo        String?        @default("") @db.VarChar(255)
+  productId   Int
+  workOrderId String?
+  product     Product        @relation(fields: [productId], references: [id])
+  workOrder   WorkOrder?     @relation(fields: [workOrderId], references: [id])
 }
 
 enum UserRole {
