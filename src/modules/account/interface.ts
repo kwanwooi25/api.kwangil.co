@@ -9,7 +9,7 @@ export interface AccountUpdateInput extends Omit<Prisma.AccountUpdateInput, 'con
 export interface GetAccountsQueryParams {
   offset?: number;
   limit?: number;
-  searchText?: string;
+  accountName?: string;
   withContacts?: boolean;
 }
 

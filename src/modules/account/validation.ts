@@ -5,7 +5,7 @@ export const getAccountsValidation = celebrate({
   [Segments.QUERY]: Joi.object({
     offset: Joi.number().integer().default(0),
     limit: Joi.number().integer().default(DEFAULT_LIMIT),
-    searchText: Joi.string().allow('').default(''),
+    accountName: Joi.string().allow('').default(''),
     withContacts: Joi.boolean().default(true),
   }),
 });
