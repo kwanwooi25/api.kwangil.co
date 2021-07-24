@@ -338,11 +338,13 @@ export default class WorkOrderService {
       account: {
         name: {
           contains: accountName,
+          mode: Prisma.QueryMode.insensitive,
         },
       },
       product: {
         name: {
           contains: productName,
+          mode: Prisma.QueryMode.insensitive,
         },
       },
     };
