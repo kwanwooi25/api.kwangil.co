@@ -115,6 +115,14 @@ export default class WorkOrderService {
     });
   }
 
+  public async getWorkOrdersByProductId(productId: number): Promise<WorkOrder[]> {
+    return await prisma.workOrder.findMany({
+      where: { productId },
+      include: this.baseInclude,
+      orderBy: { id: 'desc' },
+    });
+  }
+
   public async getWorkOrderCount({ orderedAt }: GetWorkOrderCountQueryParams): Promise<WorkOrderCount> {
     let where: Prisma.WorkOrderWhereInput = {};
     if (!!orderedAt && orderedAt.length >= 2) {

@@ -41,6 +41,15 @@ export const getWorkOrdersNeedPlate = async (req: Request, res: Response, next: 
   }
 };
 
+export const getWorkOrdersByProductId = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const workOrders = await Container.get(WorkOrderService).getWorkOrdersByProductId(+req.params.productId);
+    return res.status(HttpStatus.OK).json(workOrders);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const getWorkOrderCount = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const data = await Container.get(WorkOrderService).getWorkOrderCount(req.query);

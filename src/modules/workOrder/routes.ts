@@ -3,7 +3,7 @@ import { Router } from 'express';
 import {
     completeWorkOrders, createWorkOrder, createWorkOrders, deleteWorkOrders, getAllWorkOrders,
     getWorkOrderById, getWorkOrderCount, getWorkOrders, getWorkOrdersByDeadline,
-    getWorkOrdersNeedPlate, updateWorkOrder, updateWorkOrders
+    getWorkOrdersByProductId, getWorkOrdersNeedPlate, updateWorkOrder, updateWorkOrders
 } from './controller';
 import {
     completeWorkOrdersValidation, createWorkOrdersValidation, createWorkOrderValidation,
@@ -17,6 +17,7 @@ router.get('/list', getWorkOrdersValidation, getWorkOrders);
 router.get('/list/all', getWorkOrdersValidation, getAllWorkOrders);
 router.get('/list/deadline', getWorkOrdersByDeadline);
 router.get('/list/needPlate', getWorkOrdersNeedPlate);
+router.get('/list/:productId', getWorkOrdersByProductId);
 router.get('/count', getWorkOrderCountValidation, getWorkOrderCount);
 router.get('/:id', getWorkOrderById);
 
