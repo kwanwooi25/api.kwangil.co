@@ -191,7 +191,10 @@ export default class WorkOrderService {
           if (!product || !product.accountId) {
             throw new Error('Product not found');
           }
-          await this.createWorkOrder({ accountId: product.accountId, productId: product.id, ...restWorkOrder });
+          await prisma.workOrder.create({
+            data: { accountId: product.accountId, productId: product.id, ...restWorkOrder },
+            include: this.baseInclude,
+          });
           createdCount++;
         } catch (error) {
           failedList.push({ ...workOrder, reason: error.message as string });
