@@ -131,6 +131,7 @@ export const completeWorkOrdersValidation = celebrate({
       id: Joi.string().required(),
       completedAt: Joi.date().allow(null),
       completedQuantity: Joi.number().integer().allow(null).default(0),
+      workOrderStatus: Joi.string().valid(...Object.values(WorkOrderStatus)),
       productId: Joi.number().integer(),
     })
   ),
