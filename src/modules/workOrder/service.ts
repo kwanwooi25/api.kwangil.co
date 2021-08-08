@@ -230,7 +230,7 @@ export default class WorkOrderService {
         let stock = await prisma.stock.findFirst({ where: { productId } });
         const quantity = completedQuantity - (workOrder?.completedQuantity || 0);
 
-        if (quantity > 0) {
+        if (quantity !== 0) {
           if (!stock) {
             stock = await prisma.stock.create({
               data: {
