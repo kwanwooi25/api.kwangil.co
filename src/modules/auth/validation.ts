@@ -9,6 +9,7 @@ export const signUpValidation = celebrate({
     department: Joi.string().allow(''),
     position: Joi.string().allow(''),
     profileImageUrl: Joi.string().allow(''),
+    userRoleId: Joi.number().integer().required(),
   }),
 });
 

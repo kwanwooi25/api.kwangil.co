@@ -1,12 +1,14 @@
-import { Service } from 'typedi';
-import { sign } from 'jsonwebtoken';
 import { compareSync } from 'bcrypt';
-import { User } from '@prisma/client';
+import { sign } from 'jsonwebtoken';
+import { Service } from 'typedi';
 import { jwtConfig } from '~config';
 import { ErrorName } from '~const';
-import { prisma } from '~prisma';
 import { logger } from '~logger';
 import UserService from '~modules/user/service';
+import { prisma } from '~prisma';
+
+import { User } from '@prisma/client';
+
 import { LoginInput, LoginResult, SignUpInput } from './interface';
 
 @Service()
@@ -21,7 +23,7 @@ export default class AuthService {
 
   public async login({ email, password }: LoginInput): Promise<LoginResult> {
     const user = await this.userService.getUserByEmail(email);
-    if (!user) {
+    if (!user || !user.isActive) {
       throw new Error(ErrorName.USER_NOT_FOUND);
     }
 

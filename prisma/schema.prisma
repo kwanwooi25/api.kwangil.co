@@ -16,10 +16,19 @@ model User {
   department      String?  @default("")
   position        String?  @default("")
   profileImageUrl String?  @default("")
-  role            UserRole @default(USER)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+  isActive        Boolean  @default(false)
+  userRoleId      Int
+  userRole        UserRole @relation(fields: [userRoleId], references: [id])
   login           Login?
+}
+
+model UserRole {
+  id          Int           @id @default(autoincrement())
+  name        String
+  permissions Permissions[]
+  users       User[]
 }
 
 model Login {
@@ -94,11 +103,11 @@ model Product {
   deletedAt            DateTime?
   accountId            Int?
   account              Account?    @relation(fields: [accountId], references: [id])
+  deliveries           Delivery[]
   images               Image[]
+  stock                Stock?
   workOrders           WorkOrder[]
   plates               Plate[]
-  stock                Stock?
-  deliveries           Delivery[]
 }
 
 model Image {
@@ -116,7 +125,7 @@ model Stock {
   balance   Int
   createdAt DateTime       @default(now())
   updatedAt DateTime       @updatedAt
-  productId Int
+  productId Int            @unique
   product   Product        @relation(fields: [productId], references: [id])
   history   StockHistory[]
 }
@@ -126,8 +135,8 @@ model StockHistory {
   type      StockHistoryType
   quantity  Int
   balance   Int
-  createdAt DateTime         @default(now())
   stockId   Int
+  createdAt DateTime         @default(now())
   stock     Stock            @relation(fields: [stockId], references: [id])
 }
 
@@ -179,19 +188,44 @@ model Delivery {
   id          Int            @id @default(autoincrement())
   date        DateTime
   method      DeliveryMethod
-  quantity    Int
   isDelivered Boolean        @default(false)
   memo        String?        @default("") @db.VarChar(255)
   productId   Int
-  workOrderId String?
+  workOrderId String?        @unique
+  quantity    Int
   product     Product        @relation(fields: [productId], references: [id])
   workOrder   WorkOrder?     @relation(fields: [workOrderId], references: [id])
 }
 
-enum UserRole {
-  USER
-  MANAGER
-  ADMIN
+enum Permissions {
+  ACCOUNT_READ
+  ACCOUNT_CREATE
+  ACCOUNT_UPDATE
+  ACCOUNT_DELETE
+  QUOTE_READ
+  QUOTE_CREATE
+  QUOTE_UPDATE
+  QUOTE_DELETE
+  PRODUCT_READ
+  PRODUCT_CREATE
+  PRODUCT_UPDATE
+  PRODUCT_DELETE
+  PLATE_READ
+  PLATE_CREATE
+  PLATE_UPDATE
+  PLATE_DELETE
+  WORK_ORDER_READ
+  WORK_ORDER_CREATE
+  WORK_ORDER_UPDATE
+  WORK_ORDER_DELETE
+  DELIVERY_READ
+  DELIVERY_CREATE
+  DELIVERY_UPDATE
+  DELIVERY_DELETE
+  USER_READ
+  USER_CREATE
+  USER_UPDATE
+  USER_DELETE
 }
 
 enum PrintSide {

@@ -18,7 +18,10 @@ export const isAuthorized = async (req: Request, res: Response, next: NextFuncti
     const { id } = decoded;
 
     req.currentUserId = id;
-    req.currentUser = await Container.get(UserService).getUserById(id);
+    const currentUser = await Container.get(UserService).getUserById(id);
+    if (currentUser?.isActive) {
+      req.currentUser = currentUser;
+    }
 
     return next();
   } catch (error) {
