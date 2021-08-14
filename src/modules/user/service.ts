@@ -5,7 +5,7 @@ import { logger } from '~logger';
 import { SignUpInput } from '~modules/auth/interface';
 import { prisma } from '~prisma';
 
-import { Prisma, User } from '@prisma/client';
+import { Prisma, User, UserRole } from '@prisma/client';
 
 @Service()
 export default class UserService {
@@ -40,8 +40,9 @@ export default class UserService {
     try {
       logger.debug('... Creating User record for %o', userInput.email);
       const { password, ...userData } = userInput;
+      const userRole = (await prisma.userRole.findFirst({ where: { isDefault: true } })) as UserRole;
       return await prisma.user.create({
-        data: { ...userData, login: { create: { ...this.hashPassword(password) } } },
+        data: { userRoleId: userRole?.id, ...userData, login: { create: { ...this.hashPassword(password) } } },
       });
     } catch (error) {
       throw new Error(ErrorName.UNABLE_TO_CREATE_USER);

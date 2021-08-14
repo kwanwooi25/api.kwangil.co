@@ -8,8 +8,8 @@
   "scripts": {
     "start": "nodemon",
     "build": "npx prisma generate && tsc --build tsconfig.json",
-    "db:push": "npx prisma db push --preview-feature",
-    "db:migrate": "npx prisma migrate dev --preview-feature",
+    "db:push": "npx prisma db push",
+    "db:migrate": "npx prisma migrate dev",
     "db:generate": "npx prisma generate",
     "db:introspect": "npx prisma introspect",
     "db:client": "npx prisma studio"

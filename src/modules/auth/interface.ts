@@ -1,6 +1,6 @@
 import { Prisma, User } from '@prisma/client';
 
-export interface SignUpInput extends Prisma.UserUncheckedCreateInput {
+export interface SignUpInput extends Omit<Prisma.UserUncheckedCreateInput, 'userRoleId'> {
   password: string;
 }
 
