@@ -1,11 +1,15 @@
 import { genSaltSync, hashSync } from 'bcrypt';
 import { Service } from 'typedi';
-import { ErrorName, SALT_ROUNDS } from '~const';
+import { DEFAULT_LIMIT, ErrorName, SALT_ROUNDS } from '~const';
+import { GetListResponse } from '~interfaces/common';
 import { logger } from '~logger';
 import { SignUpInput } from '~modules/auth/interface';
 import { prisma } from '~prisma';
+import { getHasMore } from '~utils/response';
 
 import { Prisma, User, UserRole } from '@prisma/client';
+
+import { GetUsersQueryParams, UserWithRole } from './interface';
 
 @Service()
 export default class UserService {
@@ -13,12 +17,33 @@ export default class UserService {
     return await prisma.user.count();
   }
 
-  public async getUserById(id: number): Promise<User | null> {
+  public async getUsers(query: GetUsersQueryParams): Promise<GetListResponse<UserWithRole>> {
+    const { offset = 0, limit = DEFAULT_LIMIT } = query;
+    const [count, rows] = await Promise.all([
+      prisma.user.count(),
+      prisma.user.findMany({
+        skip: offset,
+        take: limit,
+        orderBy: {
+          name: 'asc',
+        },
+        include: {
+          userRole: true,
+        },
+      }),
+    ]);
+
+    const hasMore = getHasMore({ limit, offset, count });
+
+    return { rows, count, hasMore };
+  }
+
+  public async getUserById(id: number): Promise<UserWithRole | null> {
     logger.debug('... Looking for user: %o', id);
     return await prisma.user.findUnique({ where: { id }, include: { userRole: true } });
   }
 
-  public async getUserByEmail(email: string): Promise<User | null> {
+  public async getUserByEmail(email: string): Promise<UserWithRole | null> {
     logger.debug('... Looking for user: %o', email);
     return await prisma.user.findUnique({ where: { email }, include: { userRole: true } });
   }
@@ -47,6 +72,23 @@ export default class UserService {
     } catch (error) {
       throw new Error(ErrorName.UNABLE_TO_CREATE_USER);
     }
+  }
+
+  public async updateUser(id: number, userInput: Prisma.UserUpdateWithoutLoginInput): Promise<UserWithRole> {
+    const userToUpdate = await this.getUserById(id);
+    if (!userToUpdate) {
+      throw new Error(ErrorName.USER_NOT_FOUND);
+    }
+
+    logger.debug('... Updating the user %o (%o)', userToUpdate.name, userToUpdate.email);
+    const { userRole, ...data } = userInput;
+    return await prisma.user.update({
+      where: { id },
+      data,
+      include: {
+        userRole: true,
+      },
+    });
   }
 
   private hashPassword(password: string) {
