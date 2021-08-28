@@ -53,6 +53,7 @@ model Account {
   contacts   Contact[]
   products   Product[]
   workOrders WorkOrder[]
+  quotes     Quote[]
 }
 
 model Contact {
@@ -69,6 +70,29 @@ model Contact {
   deletedAt DateTime?
   accountId Int?
   account   Account?  @relation(fields: [accountId], references: [id])
+}
+
+model Quote {
+  id               Int       @id @default(autoincrement())
+  productName      String?   @default("")
+  thickness        Decimal   @db.Decimal(4, 3)
+  length           Decimal   @db.Decimal(4, 1)
+  width            Decimal   @db.Decimal(4, 1)
+  printColorCount  Int?      @default(0)
+  variableRate     Int
+  printCostPerRoll Int?      @default(8000)
+  defectiveRate    Int       @default(8)
+  plateRound       Decimal?  @db.Decimal(4, 1)
+  plateLength      Decimal?  @db.Decimal(4, 1)
+  unitPrice        Decimal   @db.Decimal(4, 1)
+  minQuantity      Int
+  plateCost        Int?
+  plateCount       Int?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  deletedAt        DateTime?
+  accountId        Int
+  account          Account   @relation(fields: [accountId], references: [id])
 }
 
 model Product {

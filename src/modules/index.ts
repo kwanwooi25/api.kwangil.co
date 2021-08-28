@@ -9,6 +9,7 @@ import { authRouter } from './auth/routes';
 import { deliveryRouter } from './delivery/routes';
 import { plateRouter } from './plate/routes';
 import { productRouter } from './product/routes';
+import { quoteRouter } from './quote/routes';
 import { stockRouter } from './stock/routes';
 import { userRouter } from './user/routes';
 import { workOrderRouter } from './workOrder/routes';
@@ -28,6 +29,7 @@ export const getRoutes = (): Router => {
   router.use('/workOrder', isAuthorized, workOrderRouter);
   router.use('/stock', isAuthorized, stockRouter);
   router.use('/delivery', isAuthorized, deliveryRouter);
+  router.use('/quote', isAuthorized, quoteRouter);
 
   router.use(errors());
   router.use(handleError);
