@@ -167,7 +167,7 @@ export default class ProductService {
 
     try {
       const { name } = productToUpdate;
-      const { imagesToCreate, images, imageIdsToDelete, ...restUserInput } = userInput;
+      const { imagesToCreate, images, imageIdsToDelete, updatedAt, ...restUserInput } = userInput;
 
       logger.debug('... Updating the product %o and its images', name);
       return await prisma.product.update({

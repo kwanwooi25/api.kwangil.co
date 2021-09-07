@@ -123,7 +123,7 @@ export default class AccountService {
       throw new Error(ErrorName.ACCOUNT_NOT_FOUND);
     }
 
-    const { contactsToCreate, contacts, contactIdsToDelete, ...accountInput } = userInput;
+    const { contactsToCreate, contacts, contactIdsToDelete, updatedAt, ...accountInput } = userInput;
 
     logger.debug('... Updating the account %o and its contacts', accountToUpdate.name);
     return await prisma.account.update({

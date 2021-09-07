@@ -1,10 +1,12 @@
-import { Plate, Prisma } from '@prisma/client';
 import { Service } from 'typedi';
 import { DEFAULT_LIMIT, ErrorName, PlateLength, PlateRound } from '~const';
 import { GetListResponse } from '~interfaces/common';
 import { logger } from '~logger';
 import { prisma } from '~prisma';
 import { getHasMore } from '~utils/response';
+
+import { Plate, Prisma } from '@prisma/client';
+
 import { GetPlatesQueryParams, PlateCreateInput, PlateUpdateInput } from './interface';
 
 @Service()
@@ -61,7 +63,7 @@ export default class PlateService {
     }
 
     try {
-      const { products, productsToDisconnect, ...restUserInput } = userInput;
+      const { products, productsToDisconnect, updatedAt, ...restUserInput } = userInput;
 
       logger.debug('... Updating the plate %o', id);
       return await prisma.plate.update({

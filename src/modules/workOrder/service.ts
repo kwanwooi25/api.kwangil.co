@@ -205,7 +205,10 @@ export default class WorkOrderService {
     return { createdCount, failedList };
   }
 
-  public async updateWorkOrder(id: string, userInput: WorkOrderUpdateInput): Promise<WorkOrder | null> {
+  public async updateWorkOrder(
+    id: string,
+    { orderUpdatedAt, ...userInput }: WorkOrderUpdateInput
+  ): Promise<WorkOrder | null> {
     const workOrderToUpdate = await this.getWorkOrderById(id);
     if (!workOrderToUpdate) {
       throw new Error(ErrorName.WORK_ORDER_NOT_FOUND);
