@@ -4,8 +4,12 @@ import { GetListResponse } from '~interfaces/common';
 import { logger } from '~logger';
 import AccountService from '~modules/account/service';
 import {
-    FailedProductCreationAttributes, GetProductsQueryParams, ProductCreateInput,
-    ProductsCreateInput, ProductsCreationResponse, ProductUpdateInput
+  FailedProductCreationAttributes,
+  GetProductsQueryParams,
+  ProductCreateInput,
+  ProductsCreateInput,
+  ProductsCreationResponse,
+  ProductUpdateInput,
 } from '~modules/product/interface';
 import { prisma } from '~prisma';
 import { getHasMore } from '~utils/response';
@@ -42,7 +46,14 @@ export default class ProductService {
     length: number;
     width: number;
   }): Promise<Product | null> {
-    logger.debug('... Looking for product: %o %o %o %o %o', accountName, name, thickness, length, width);
+    logger.debug(
+      '... Looking for product: %o %o %o %o %o',
+      accountName,
+      name,
+      thickness,
+      length,
+      width,
+    );
     return await prisma.product.findFirst({
       where: {
         AND: {
@@ -120,7 +131,7 @@ export default class ProductService {
         userInput.name,
         userInput.thickness,
         userInput.length,
-        userInput.width
+        userInput.width,
       );
       const { account, images, ...productData } = userInput;
       return await prisma.product.create({
@@ -153,7 +164,7 @@ export default class ProductService {
         } catch (error) {
           failedList.push({ ...product, reason: error.message as string });
         }
-      })
+      }),
     );
 
     return { createdCount, failedList };
@@ -176,7 +187,10 @@ export default class ProductService {
           ...restUserInput,
           images: {
             create: imagesToCreate,
-            updateMany: images?.map(({ id, productId, ...image }) => ({ where: { id }, data: image })),
+            updateMany: images?.map(({ id, productId, ...image }) => ({
+              where: { id },
+              data: image,
+            })),
             deleteMany: imageIdsToDelete?.map((id) => ({ id })),
           },
         },
@@ -194,38 +208,45 @@ export default class ProductService {
     return count;
   }
 
-  private generateWhereClause(query: GetProductsQueryParams): Prisma.ProductWhereInput {
-    const [minThickness, maxThickness] = query.thickness || [ProductThickness.MIN, ProductThickness.MAX];
-    const [minLength, maxLength] = query.length || [ProductLength.MIN, ProductLength.MAX];
-    const [minWidth, maxWidth] = query.width || [ProductWidth.MIN, ProductWidth.MAX];
-
+  private generateWhereClause({
+    accountName,
+    name,
+    extColor,
+    printColor,
+    thickness,
+    length,
+    width,
+  }: GetProductsQueryParams): Prisma.ProductWhereInput {
     return {
       AND: {
         account: {
-          name: { contains: query.accountName, mode: Prisma.QueryMode.insensitive },
+          name: { contains: accountName, mode: Prisma.QueryMode.insensitive },
         },
-        name: { contains: query.name, mode: Prisma.QueryMode.insensitive },
-        extColor: { contains: query.extColor, mode: Prisma.QueryMode.insensitive },
+        name: { contains: name, mode: Prisma.QueryMode.insensitive },
+        extColor: { contains: extColor, mode: Prisma.QueryMode.insensitive },
         OR: [
           {
-            printFrontColor: { contains: query.printColor, mode: Prisma.QueryMode.insensitive },
+            printFrontColor: { contains: printColor, mode: Prisma.QueryMode.insensitive },
           },
           {
-            printBackColor: { contains: query.printColor, mode: Prisma.QueryMode.insensitive },
+            printBackColor: { contains: printColor, mode: Prisma.QueryMode.insensitive },
           },
         ],
-        thickness: {
-          gte: minThickness.toFixed(3),
-          lte: maxThickness.toFixed(3),
-        },
-        length: {
-          gte: minLength.toFixed(2),
-          lte: maxLength.toFixed(2),
-        },
-        width: {
-          gte: minWidth.toFixed(2),
-          lte: maxWidth.toFixed(2),
-        },
+        thickness: thickness
+          ? {
+              equals: +thickness,
+            }
+          : undefined,
+        length: length
+          ? {
+              equals: +length,
+            }
+          : undefined,
+        width: width
+          ? {
+              equals: +width,
+            }
+          : undefined,
       },
     };
   }

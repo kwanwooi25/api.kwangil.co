@@ -5,9 +5,9 @@ export interface GetProductsQueryParams {
   limit?: number;
   accountName?: string;
   name?: string;
-  thickness?: number[];
-  length?: number[];
-  width?: number[];
+  thickness?: string | number;
+  length?: string | number;
+  width?: string | number;
   extColor?: string;
   printColor?: string;
 }

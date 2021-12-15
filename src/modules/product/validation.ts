@@ -8,9 +8,9 @@ export const getProductsValidation = celebrate({
     limit: Joi.number().integer().default(DEFAULT_LIMIT),
     accountName: Joi.string().allow('').default(''),
     name: Joi.string().allow('').default(''),
-    thickness: Joi.array().items(Joi.number()),
-    length: Joi.array().items(Joi.number()),
-    width: Joi.array().items(Joi.number()),
+    thickness: Joi.string().allow('').default(''),
+    length: Joi.string().allow('').default(''),
+    width: Joi.string().allow('').default(''),
     extColor: Joi.string().allow('').default(''),
     printColor: Joi.string().allow('').default(''),
   }),
@@ -49,7 +49,7 @@ export const createProductValidation = celebrate({
       Joi.object({
         fileName: Joi.string().required(),
         imageUrl: Joi.string().required(),
-      })
+      }),
     ),
   }),
 });
@@ -88,9 +88,9 @@ export const createProductsValidation = celebrate({
         Joi.object({
           fileName: Joi.string().required(),
           imageUrl: Joi.string().required(),
-        })
+        }),
       ),
-    })
+    }),
   ),
 });
 
@@ -131,7 +131,7 @@ export const updateProductValidation = celebrate({
       Joi.object({
         fileName: Joi.string().required(),
         imageUrl: Joi.string().required(),
-      })
+      }),
     ),
     imageIdsToDelete: Joi.array().items(Joi.number().integer()),
     createdAt: Joi.date(),
