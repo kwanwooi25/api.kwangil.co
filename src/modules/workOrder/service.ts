@@ -9,14 +9,27 @@ import { getHasMore } from '~utils/response';
 import { getDefaultOrderedAtRange } from '~utils/workOrder';
 
 import {
-    PlateStatus, PrintSide, Prisma, Stock, StockHistoryType, WorkOrder, WorkOrderStatus
+  PlateStatus,
+  PrintSide,
+  Prisma,
+  Stock,
+  StockHistoryType,
+  WorkOrder,
+  WorkOrderStatus,
 } from '@prisma/client';
 
 import {
-    FailedWorkOrderCreationAttributes, GetWorkOrderCountQueryParams,
-    GetWorkOrdersByDeadlineQueryParams, GetWorkOrdersQueryParams, WorkOrderCompleteInput,
-    WorkOrderCount, WorkOrderCreateInput, WorkOrdersByDeadline, WorkOrdersCreateInput,
-    WorkOrdersCreationResponse, WorkOrderUpdateInput
+  FailedWorkOrderCreationAttributes,
+  GetWorkOrderCountQueryParams,
+  GetWorkOrdersByDeadlineQueryParams,
+  GetWorkOrdersQueryParams,
+  WorkOrderCompleteInput,
+  WorkOrderCount,
+  WorkOrderCreateInput,
+  WorkOrdersByDeadline,
+  WorkOrdersCreateInput,
+  WorkOrdersCreationResponse,
+  WorkOrderUpdateInput,
 } from './interface';
 
 @Service()
@@ -51,7 +64,9 @@ export default class WorkOrderService {
     return { count, rows, hasMore };
   }
 
-  public async getAllWorkOrders(query: GetWorkOrdersQueryParams): Promise<GetListResponse<WorkOrder>> {
+  public async getAllWorkOrders(
+    query: GetWorkOrdersQueryParams,
+  ): Promise<GetListResponse<WorkOrder>> {
     const where = this.generateWhereClause(query);
 
     const rows = await prisma.workOrder.findMany({
@@ -63,7 +78,9 @@ export default class WorkOrderService {
     return { rows };
   }
 
-  public async getWorkOrdersByDeadline(query: GetWorkOrdersByDeadlineQueryParams): Promise<WorkOrdersByDeadline> {
+  public async getWorkOrdersByDeadline(
+    query: GetWorkOrdersByDeadlineQueryParams,
+  ): Promise<WorkOrdersByDeadline> {
     const deadline = query.deadline || format(new Date(), DATE_FORMAT);
 
     const [overdue, imminent] = await Promise.all([
@@ -123,7 +140,9 @@ export default class WorkOrderService {
     });
   }
 
-  public async getWorkOrderCount({ orderedAt }: GetWorkOrderCountQueryParams): Promise<WorkOrderCount> {
+  public async getWorkOrderCount({
+    orderedAt,
+  }: GetWorkOrderCountQueryParams): Promise<WorkOrderCount> {
     let where: Prisma.WorkOrderWhereInput = {};
     if (!!orderedAt && orderedAt.length >= 2) {
       where = {
@@ -134,16 +153,33 @@ export default class WorkOrderService {
       };
     }
 
-    const [NOT_STARTED, EXTRUDING, PRINTING, CUTTING, COMPLETED, NONE, SINGLE, DOUBLE] = await Promise.all([
-      await prisma.workOrder.count({ where: { ...where, workOrderStatus: { equals: WorkOrderStatus.NOT_STARTED } } }),
-      await prisma.workOrder.count({ where: { ...where, workOrderStatus: { equals: WorkOrderStatus.EXTRUDING } } }),
-      await prisma.workOrder.count({ where: { ...where, workOrderStatus: { equals: WorkOrderStatus.PRINTING } } }),
-      await prisma.workOrder.count({ where: { ...where, workOrderStatus: { equals: WorkOrderStatus.CUTTING } } }),
-      await prisma.workOrder.count({ where: { ...where, workOrderStatus: { equals: WorkOrderStatus.COMPLETED } } }),
-      await prisma.workOrder.count({ where: { ...where, product: { printSide: { equals: PrintSide.NONE } } } }),
-      await prisma.workOrder.count({ where: { ...where, product: { printSide: { equals: PrintSide.SINGLE } } } }),
-      await prisma.workOrder.count({ where: { ...where, product: { printSide: { equals: PrintSide.DOUBLE } } } }),
-    ]);
+    const [NOT_STARTED, EXTRUDING, PRINTING, CUTTING, COMPLETED, NONE, SINGLE, DOUBLE] =
+      await Promise.all([
+        await prisma.workOrder.count({
+          where: { ...where, workOrderStatus: { equals: WorkOrderStatus.NOT_STARTED } },
+        }),
+        await prisma.workOrder.count({
+          where: { ...where, workOrderStatus: { equals: WorkOrderStatus.EXTRUDING } },
+        }),
+        await prisma.workOrder.count({
+          where: { ...where, workOrderStatus: { equals: WorkOrderStatus.PRINTING } },
+        }),
+        await prisma.workOrder.count({
+          where: { ...where, workOrderStatus: { equals: WorkOrderStatus.CUTTING } },
+        }),
+        await prisma.workOrder.count({
+          where: { ...where, workOrderStatus: { equals: WorkOrderStatus.COMPLETED } },
+        }),
+        await prisma.workOrder.count({
+          where: { ...where, product: { printSide: { equals: PrintSide.NONE } } },
+        }),
+        await prisma.workOrder.count({
+          where: { ...where, product: { printSide: { equals: PrintSide.SINGLE } } },
+        }),
+        await prisma.workOrder.count({
+          where: { ...where, product: { printSide: { equals: PrintSide.DOUBLE } } },
+        }),
+      ]);
 
     return {
       byStatus: { NOT_STARTED, EXTRUDING, PRINTING, CUTTING, COMPLETED },
@@ -179,15 +215,30 @@ export default class WorkOrderService {
     }
   }
 
-  public async createWorkOrders(userInput: WorkOrdersCreateInput[]): Promise<WorkOrdersCreationResponse> {
+  public async createWorkOrders(
+    userInput: WorkOrdersCreateInput[],
+  ): Promise<WorkOrdersCreationResponse> {
     let failedList: FailedWorkOrderCreationAttributes[] = [];
     let createdCount = 0;
 
     await Promise.all(
       userInput.map(async (workOrder) => {
         try {
-          const { accountName, productName: name, thickness, length, width, ...restWorkOrder } = workOrder;
-          const product = await this.productService.getProduct({ accountName, name, thickness, length, width });
+          const {
+            accountName,
+            productName: name,
+            thickness,
+            length,
+            width,
+            ...restWorkOrder
+          } = workOrder;
+          const product = await this.productService.getProduct({
+            accountName,
+            name,
+            thickness,
+            length,
+            width,
+          });
           if (!product || !product.accountId) {
             throw new Error('Product not found');
           }
@@ -199,7 +250,7 @@ export default class WorkOrderService {
         } catch (error) {
           failedList.push({ ...workOrder, reason: error.message as string });
         }
-      })
+      }),
     );
 
     return { createdCount, failedList };
@@ -207,7 +258,7 @@ export default class WorkOrderService {
 
   public async updateWorkOrder(
     id: string,
-    { orderUpdatedAt, ...userInput }: WorkOrderUpdateInput
+    { orderUpdatedAt, ...userInput }: WorkOrderUpdateInput,
   ): Promise<WorkOrder | null> {
     const workOrderToUpdate = await this.getWorkOrderById(id);
     if (!workOrderToUpdate) {
@@ -228,55 +279,57 @@ export default class WorkOrderService {
 
   public async completeWorkOrders(workOrders: WorkOrderCompleteInput[]): Promise<WorkOrder[]> {
     return await Promise.all(
-      workOrders.map(async ({ id, completedQuantity = 0, completedAt, workOrderStatus, productId }) => {
-        const workOrder = await prisma.workOrder.findUnique({ where: { id } });
-        let stock = await prisma.stock.findFirst({ where: { productId } });
-        const quantity = completedQuantity - (workOrder?.completedQuantity || 0);
+      workOrders.map(
+        async ({ id, completedQuantity = 0, completedAt, workOrderStatus, productId }) => {
+          const workOrder = await prisma.workOrder.findUnique({ where: { id } });
+          let stock = await prisma.stock.findFirst({ where: { productId } });
+          const quantity = completedQuantity - (workOrder?.completedQuantity || 0);
 
-        if (quantity !== 0) {
-          if (!stock) {
-            stock = await prisma.stock.create({
+          if (quantity !== 0) {
+            if (!stock) {
+              stock = await prisma.stock.create({
+                data: {
+                  balance: 0,
+                  product: { connect: { id: productId } },
+                  history: {
+                    create: {
+                      type: StockHistoryType.CREATED,
+                      quantity: 0,
+                      balance: 0,
+                    },
+                  },
+                },
+              });
+            }
+
+            const lastStockHistory = await prisma.stockHistory.findFirst({
+              where: { stockId: stock?.id },
+              orderBy: { createdAt: 'desc' },
+            });
+            const balance = lastStockHistory!.balance + quantity;
+
+            await prisma.stock.update({
+              where: { id: stock.id },
               data: {
-                balance: 0,
-                product: { connect: { id: productId } },
+                balance,
                 history: {
                   create: {
-                    type: StockHistoryType.CREATED,
-                    quantity: 0,
-                    balance: 0,
+                    type: StockHistoryType.MANUFACTURED,
+                    quantity,
+                    balance,
                   },
                 },
               },
             });
           }
 
-          const lastStockHistory = await prisma.stockHistory.findFirst({
-            where: { stockId: stock?.id },
-            orderBy: { createdAt: 'desc' },
+          return await prisma.workOrder.update({
+            where: { id },
+            data: { completedAt, completedQuantity, workOrderStatus },
+            include: this.baseInclude,
           });
-          const balance = lastStockHistory!.balance + quantity;
-
-          await prisma.stock.update({
-            where: { id: stock.id },
-            data: {
-              balance,
-              history: {
-                create: {
-                  type: StockHistoryType.MANUFACTURED,
-                  quantity,
-                  balance,
-                },
-              },
-            },
-          });
-        }
-
-        return await prisma.workOrder.update({
-          where: { id },
-          data: { completedAt, completedQuantity, workOrderStatus },
-          include: this.baseInclude,
-        });
-      })
+        },
+      ),
     );
   }
 
@@ -305,7 +358,10 @@ export default class WorkOrderService {
       if (!workOrderSeq) {
         await prisma.workOrderSeq.create({ data: { id: workOrderSeqId, seq: 1 } });
       } else if (workOrderSeq.seq < workOrderSeqValue) {
-        await prisma.workOrderSeq.update({ where: { id: workOrderSeqId }, data: { seq: workOrderSeqValue } });
+        await prisma.workOrderSeq.update({
+          where: { id: workOrderSeqId },
+          data: { seq: workOrderSeqValue },
+        });
       }
 
       return id;
@@ -329,6 +385,9 @@ export default class WorkOrderService {
       orderedAt = getDefaultOrderedAtRange(),
       accountName = '',
       productName = '',
+      thickness,
+      length,
+      width,
       includeCompleted = false,
     } = query;
     let where: Prisma.WorkOrderWhereInput = {
@@ -347,6 +406,21 @@ export default class WorkOrderService {
           contains: productName,
           mode: Prisma.QueryMode.insensitive,
         },
+        thickness: thickness
+          ? {
+              equals: +thickness,
+            }
+          : undefined,
+        length: length
+          ? {
+              equals: +length,
+            }
+          : undefined,
+        width: width
+          ? {
+              equals: +width,
+            }
+          : undefined,
       },
     };
 

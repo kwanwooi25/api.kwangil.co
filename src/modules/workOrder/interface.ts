@@ -6,6 +6,9 @@ export interface GetWorkOrdersQueryParams {
   orderedAt?: (Date | string)[];
   accountName?: string;
   productName?: string;
+  thickness?: string | number;
+  length?: string | number;
+  width?: string | number;
   includeCompleted?: boolean;
 }
 
@@ -21,7 +24,8 @@ export interface WorkOrderCreateInput extends Omit<Prisma.WorkOrderUncheckedCrea
   id?: string;
 }
 
-export interface WorkOrdersCreateInput extends Omit<Prisma.WorkOrderUncheckedCreateInput, 'accountId' | 'productId'> {
+export interface WorkOrdersCreateInput
+  extends Omit<Prisma.WorkOrderUncheckedCreateInput, 'accountId' | 'productId'> {
   accountName: string;
   productName: string;
   thickness: number;

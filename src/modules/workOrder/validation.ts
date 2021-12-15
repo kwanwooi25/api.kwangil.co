@@ -10,6 +10,9 @@ export const getWorkOrdersValidation = celebrate({
     orderedAt: Joi.array().items(Joi.date()),
     accountName: Joi.string().allow('').default(''),
     productName: Joi.string().allow('').default(''),
+    thickness: Joi.string().allow('').default(''),
+    length: Joi.string().allow('').default(''),
+    width: Joi.string().allow('').default(''),
     includeCompleted: Joi.boolean().default(false),
   }),
 });
@@ -73,7 +76,7 @@ export const createWorkOrdersValidation = celebrate({
       thickness: Joi.number().required(),
       length: Joi.number().required(),
       width: Joi.number().required(),
-    })
+    }),
   ),
 });
 
@@ -120,7 +123,7 @@ export const updateWorkOrdersValidation = celebrate({
         deliveredAt: Joi.date().allow(null),
         deliveredQuantity: Joi.number().integer().allow(null).default(0),
         deletedAt: Joi.date().allow(null),
-      })
+      }),
     )
     .required(),
 });
@@ -133,7 +136,7 @@ export const completeWorkOrdersValidation = celebrate({
       completedQuantity: Joi.number().integer().allow(null).default(0),
       workOrderStatus: Joi.string().valid(...Object.values(WorkOrderStatus)),
       productId: Joi.number().integer(),
-    })
+    }),
   ),
 });
 
