@@ -111,6 +111,7 @@ export default class ProductService {
       include: {
         account: true,
         images: true,
+        workOrders: true,
       },
       orderBy: [
         { account: { name: 'asc' } },
