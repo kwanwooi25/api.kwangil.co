@@ -1,6 +1,7 @@
-import { PrintSide } from '@prisma/client';
 import { celebrate, Joi, Segments } from 'celebrate';
 import { DEFAULT_LIMIT } from '~const';
+
+import { PrintSide } from '@prisma/client';
 
 export const getProductsValidation = celebrate({
   [Segments.QUERY]: Joi.object({
@@ -45,6 +46,7 @@ export const createProductValidation = celebrate({
     packUnit: Joi.number().default(0),
     packCanDeliverAll: Joi.boolean().default(false),
     packMemo: Joi.string().allow(''),
+    productMemo: Joi.string().allow(''),
     images: Joi.array().items(
       Joi.object({
         fileName: Joi.string().required(),
@@ -84,6 +86,7 @@ export const createProductsValidation = celebrate({
       packUnit: Joi.number().default(0),
       packCanDeliverAll: Joi.boolean().default(false),
       packMemo: Joi.string().allow(''),
+      productMemo: Joi.string().allow(''),
       images: Joi.array().items(
         Joi.object({
           fileName: Joi.string().required(),
@@ -126,6 +129,7 @@ export const updateProductValidation = celebrate({
     packUnit: Joi.number().default(0),
     packCanDeliverAll: Joi.boolean().default(false),
     packMemo: Joi.string().allow(''),
+    productMemo: Joi.string().allow(''),
     images: Joi.array(),
     imagesToCreate: Joi.array().items(
       Joi.object({

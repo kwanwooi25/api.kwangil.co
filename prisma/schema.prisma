@@ -123,7 +123,8 @@ model Product {
   packMaterial         String?     @default("마대")
   packUnit             Int?        @default(0)
   packCanDeliverAll    Boolean?    @default(false)
-  packMemo             String?     @default(dbgenerated("''::text")) @db.VarChar(255)
+  packMemo             String?     @default("") @db.VarChar(255)
+  productMemo          String?     @default("") @db.VarChar(255)
   createdAt            DateTime    @default(now())
   updatedAt            DateTime    @updatedAt
   deletedAt            DateTime?

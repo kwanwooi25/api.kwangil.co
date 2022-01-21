@@ -4,12 +4,8 @@ import { GetListResponse } from '~interfaces/common';
 import { logger } from '~logger';
 import AccountService from '~modules/account/service';
 import {
-  FailedProductCreationAttributes,
-  GetProductsQueryParams,
-  ProductCreateInput,
-  ProductsCreateInput,
-  ProductsCreationResponse,
-  ProductUpdateInput,
+    FailedProductCreationAttributes, GetProductsQueryParams, ProductCreateInput,
+    ProductsCreateInput, ProductsCreationResponse, ProductUpdateInput
 } from '~modules/product/interface';
 import { prisma } from '~prisma';
 import { getHasMore } from '~utils/response';
