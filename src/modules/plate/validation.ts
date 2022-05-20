@@ -6,6 +6,7 @@ export const getPlatesValidation = celebrate({
   [Segments.QUERY]: Joi.object({
     offset: Joi.number().integer().default(0),
     limit: Joi.number().integer().default(DEFAULT_LIMIT),
+    id: Joi.allow(Joi.number().integer(), Joi.string()),
     round: Joi.array().items(Joi.number()),
     length: Joi.array().items(Joi.number()),
     accountName: Joi.string().allow('').default(''),

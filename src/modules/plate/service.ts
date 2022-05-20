@@ -124,6 +124,9 @@ export default class PlateService {
 
     return {
       AND: {
+        id: {
+          equals: query.id ? +query.id : undefined,
+        },
         round: {
           gte: minRound,
           lte: maxRound,

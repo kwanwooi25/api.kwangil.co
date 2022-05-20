@@ -3,6 +3,7 @@ import { Prisma, Product } from '@prisma/client';
 export interface GetPlatesQueryParams {
   offset?: number;
   limit?: number;
+  id?: number | string;
   round?: number[];
   length?: number[];
   name?: string;
