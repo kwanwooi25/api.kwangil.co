@@ -3,14 +3,25 @@ import { isPermitted } from '~middlewares/isPermitted';
 
 import { Permissions } from '@prisma/client';
 
-import { createPlate, deletePlates, getPlateById, getPlates, updatePlate } from './controller';
 import {
-    createPlateValidation, deletePlatesValidation, getPlatesValidation, updatePlateValidation
+  createPlate,
+  deletePlates,
+  getAllPlates,
+  getPlateById,
+  getPlates,
+  updatePlate,
+} from './controller';
+import {
+  createPlateValidation,
+  deletePlatesValidation,
+  getPlatesValidation,
+  updatePlateValidation,
 } from './validation';
 
 const router: Router = Router();
 
 router.get('/list', isPermitted([Permissions.PLATE_READ]), getPlatesValidation, getPlates);
+router.get('/list/all', isPermitted([Permissions.PRODUCT_READ]), getPlatesValidation, getAllPlates);
 router.get('/:id', isPermitted([Permissions.PLATE_READ]), getPlateById);
 
 router.post('/', isPermitted([Permissions.PLATE_CREATE]), createPlateValidation, createPlate);

@@ -21,6 +21,15 @@ export const getPlates = async (req: Request, res: Response, next: NextFunction)
   }
 };
 
+export const getAllPlates = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const data = await Container.get(PlateService).getAllPlates(req.query);
+    return res.status(HttpStatus.OK).json(data);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const createPlate = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const plate = await Container.get(PlateService).createPlate(req.body);

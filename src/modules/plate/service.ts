@@ -40,6 +40,18 @@ export default class PlateService {
     return { count, rows, hasMore };
   }
 
+  public async getAllPlates(query: GetPlatesQueryParams): Promise<GetListResponse<Plate>> {
+    const where = this.generateWhereClause(query);
+
+    const rows = await prisma.plate.findMany({
+      where,
+      orderBy: [{ round: 'asc' }, { length: 'asc' }, { name: 'asc' }],
+      include: this.baseInclude,
+    });
+
+    return { rows };
+  }
+
   public async createPlate({ products, ...plate }: PlateCreateInput): Promise<Plate | null> {
     try {
       logger.debug('... Creating plate');
