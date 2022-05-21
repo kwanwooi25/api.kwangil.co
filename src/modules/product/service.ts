@@ -4,8 +4,12 @@ import { GetListResponse } from '~interfaces/common';
 import { logger } from '~logger';
 import AccountService from '~modules/account/service';
 import {
-    FailedProductCreationAttributes, GetProductsQueryParams, ProductCreateInput,
-    ProductsCreateInput, ProductsCreationResponse, ProductUpdateInput
+  FailedProductCreationAttributes,
+  GetProductsQueryParams,
+  ProductCreateInput,
+  ProductsCreateInput,
+  ProductsCreationResponse,
+  ProductUpdateInput,
 } from '~modules/product/interface';
 import { prisma } from '~prisma';
 import { getHasMore } from '~utils/response';
@@ -25,6 +29,12 @@ export default class ProductService {
         images: true,
         plates: true,
         stock: true,
+        workOrders: {
+          orderBy: {
+            orderedAt: 'desc',
+          },
+          take: 1,
+        },
       },
     });
   }
@@ -64,6 +74,7 @@ export default class ProductService {
       },
       include: {
         account: true,
+        plates: true,
       },
     });
   }
@@ -159,7 +170,7 @@ export default class ProductService {
           await this.createProduct({ accountId: account.id, ...restProduct });
           createdCount++;
         } catch (error) {
-          failedList.push({ ...product, reason: error.message as string });
+          failedList.push({ ...product, reason: (error as any).message });
         }
       }),
     );
