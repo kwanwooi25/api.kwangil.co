@@ -248,7 +248,7 @@ export default class WorkOrderService {
           });
           createdCount++;
         } catch (error) {
-          failedList.push({ ...workOrder, reason: error.message as string });
+          failedList.push({ ...workOrder, reason: (error as any).message });
         }
       }),
     );
@@ -436,6 +436,7 @@ export default class WorkOrderService {
       include: {
         account: true,
         images: true,
+        plates: true,
       },
     },
   };
