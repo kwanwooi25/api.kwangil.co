@@ -4,6 +4,7 @@ export interface GetPlatesQueryParams {
   offset?: number;
   limit?: number;
   id?: number | string;
+  code?: string;
   round?: number[];
   length?: number[];
   name?: string;
