@@ -1,5 +1,5 @@
 generator client {
-  provider        = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -51,8 +51,8 @@ model Account {
   deletedAt  DateTime?
   contacts   Contact[]
   products   Product[]
-  workOrders WorkOrder[]
   quotes     Quote[]
+  workOrders WorkOrder[]
 }
 
 model Contact {
@@ -168,7 +168,6 @@ model StockHistory {
 
 model Plate {
   id        Int           @id @default(autoincrement())
-  code      String?       @default("")
   round     Decimal       @db.Decimal(4, 1)
   length    Decimal       @db.Decimal(4, 1)
   name      String?       @default("")
@@ -178,6 +177,7 @@ model Plate {
   updatedAt DateTime      @updatedAt
   deletedAt DateTime?
   memo      String?       @default("") @db.VarChar(255)
+  code      Int?
   products  Product[]
 }
 
