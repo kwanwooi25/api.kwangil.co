@@ -8,7 +8,7 @@
   "scripts": {
     "start": "nodemon",
     "build": "npx prisma generate && tsc --build tsconfig.json",
-    "db:push": "npx prisma db push",
+    "db:push": "npx prisma db push --accept-data-loss",
     "db:migrate": "npx prisma migrate dev",
     "db:generate": "npx prisma generate",
     "db:introspect": "npx prisma introspect",
