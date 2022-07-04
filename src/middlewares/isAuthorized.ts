@@ -25,7 +25,9 @@ export const isAuthorized = async (req: Request, res: Response, next: NextFuncti
 
     return next();
   } catch (error) {
-    error.message = ErrorName.TOKEN_INVALID;
+    if (error instanceof Error) {
+      error.message = ErrorName.TOKEN_INVALID;
+    }
     return next(error);
   }
 };

@@ -58,7 +58,7 @@ export default class QuoteService {
     }
   }
 
-  private defaultOrderBy: Prisma.QuoteOrderByInput[] = [
+  private defaultOrderBy: Prisma.QuoteOrderByWithRelationInput[] = [
     { createdAt: 'desc' },
     { productName: 'asc' },
     { thickness: 'asc' },

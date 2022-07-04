@@ -8,8 +8,10 @@ import { getHasMore } from '~utils/response';
 import { Account, Prisma } from '@prisma/client';
 
 import {
-    AccountsCreationResponse, AccountUpdateInput, FailedAccountCreationAttributes,
-    GetAccountsQueryParams
+  AccountsCreationResponse,
+  AccountUpdateInput,
+  FailedAccountCreationAttributes,
+  GetAccountsQueryParams,
 } from './interface';
 
 @Service()
@@ -99,7 +101,9 @@ export default class AccountService {
     }
   }
 
-  public async createAccounts(userInput: Prisma.AccountCreateInput[]): Promise<AccountsCreationResponse> {
+  public async createAccounts(
+    userInput: Prisma.AccountCreateInput[],
+  ): Promise<AccountsCreationResponse> {
     let failedList: FailedAccountCreationAttributes[] = [];
     let createdCount = 0;
 
@@ -109,9 +113,11 @@ export default class AccountService {
           await this.createAccount(account);
           createdCount++;
         } catch (error) {
-          failedList.push({ ...account, reason: error.message as string });
+          if (error instanceof Error) {
+            failedList.push({ ...account, reason: error.message as string });
+          }
         }
-      })
+      }),
     );
 
     return { createdCount, failedList };
@@ -123,7 +129,8 @@ export default class AccountService {
       throw new Error(ErrorName.ACCOUNT_NOT_FOUND);
     }
 
-    const { contactsToCreate, contacts, contactIdsToDelete, updatedAt, ...accountInput } = userInput;
+    const { contactsToCreate, contacts, contactIdsToDelete, updatedAt, ...accountInput } =
+      userInput;
 
     logger.debug('... Updating the account %o and its contacts', accountToUpdate.name);
     return await prisma.account.update({
@@ -132,7 +139,10 @@ export default class AccountService {
         ...accountInput,
         contacts: {
           create: contactsToCreate,
-          updateMany: contacts?.map(({ id, accountId, ...contact }) => ({ where: { id }, data: contact })),
+          updateMany: contacts?.map(({ id, accountId, ...contact }) => ({
+            where: { id },
+            data: contact,
+          })),
           deleteMany: contactIdsToDelete?.map((id) => ({ id })),
         },
       },
