@@ -30,7 +30,7 @@ export default class PlateService {
         skip: offset,
         take: limit,
         where,
-        orderBy: [{ round: 'asc' }, { length: 'asc' }, { name: 'asc' }],
+        orderBy: this.baseOrderBy,
         include: this.baseInclude,
       }),
     ]);
@@ -45,7 +45,7 @@ export default class PlateService {
 
     const rows = await prisma.plate.findMany({
       where,
-      orderBy: [{ round: 'asc' }, { length: 'asc' }, { name: 'asc' }],
+      orderBy: this.baseOrderBy,
       include: this.baseInclude,
     });
 
@@ -183,4 +183,11 @@ export default class PlateService {
       ],
     },
   };
+
+  private baseOrderBy: Prisma.PlateOrderByWithRelationInput[] = [
+    { code: 'desc' },
+    { round: 'asc' },
+    { length: 'asc' },
+    { name: 'asc' },
+  ];
 }
