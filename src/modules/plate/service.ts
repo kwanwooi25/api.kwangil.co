@@ -140,7 +140,7 @@ export default class PlateService {
           equals: query.id ? +query.id : undefined,
         },
         code: {
-          contains: query.code,
+          equals: query.code ? +query.code : undefined,
         },
         round: {
           gte: minRound,

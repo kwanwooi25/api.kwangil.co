@@ -7,7 +7,7 @@ export const getPlatesValidation = celebrate({
     offset: Joi.number().integer().default(0),
     limit: Joi.number().integer().default(DEFAULT_LIMIT),
     id: Joi.allow(Joi.number().integer(), Joi.string()),
-    code: Joi.string().allow('').default(''),
+    code: Joi.allow(Joi.number().integer(), Joi.string()),
     round: Joi.array().items(Joi.number()),
     length: Joi.array().items(Joi.number()),
     accountName: Joi.string().allow('').default(''),
@@ -18,7 +18,7 @@ export const getPlatesValidation = celebrate({
 
 export const createPlateValidation = celebrate({
   [Segments.BODY]: Joi.object({
-    code: Joi.string().required(),
+    code: Joi.number().required(),
     round: Joi.number().required(),
     length: Joi.number().required(),
     name: Joi.string().allow('').default(''),
@@ -34,7 +34,7 @@ export const updatePlateValidation = celebrate({
     id: Joi.number().integer().required(),
   }),
   [Segments.BODY]: Joi.object({
-    code: Joi.string().required(),
+    code: Joi.number().required(),
     round: Joi.number().required(),
     length: Joi.number().required(),
     name: Joi.string().allow('').default(''),
