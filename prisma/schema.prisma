@@ -177,7 +177,7 @@ model Plate {
   updatedAt DateTime      @updatedAt
   deletedAt DateTime?
   memo      String?       @default("") @db.VarChar(255)
-  code      Int?
+  code      Int?          @unique
   products  Product[]
 }
 
