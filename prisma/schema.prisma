@@ -124,6 +124,8 @@ model Product {
   packCanDeliverAll    Boolean?    @default(false)
   packMemo             String?     @default("") @db.VarChar(255)
   productMemo          String?     @default("") @db.VarChar(255)
+  shouldKeepRemainder  Boolean     @default(false)
+  deliveryMethod       DeliveryMethod  @default(TBD)
   createdAt            DateTime    @default(now())
   updatedAt            DateTime    @updatedAt
   deletedAt            DateTime?
