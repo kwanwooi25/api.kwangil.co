@@ -1,3 +1,4 @@
+import { DeliveryMethod } from '@prisma/client';
 import { celebrate, Joi, Segments } from 'celebrate';
 import { DEFAULT_LIMIT } from '~const';
 
@@ -14,6 +15,9 @@ export const createAccountValidation = celebrate({
   [Segments.BODY]: Joi.object({
     name: Joi.string().required(),
     crn: Joi.string().allow(''),
+    deliveryMethod: Joi.string()
+      .valid(...Object.values(DeliveryMethod))
+      .default(DeliveryMethod.TBD),
     memo: Joi.string().allow(''),
     contacts: Joi.array().items(
       Joi.object({
@@ -24,7 +28,7 @@ export const createAccountValidation = celebrate({
         email: Joi.string().email().allow(''),
         address: Joi.string().allow(''),
         memo: Joi.string().allow(''),
-      })
+      }),
     ),
   }),
 });
@@ -34,6 +38,9 @@ export const createAccountsValidation = celebrate({
     Joi.object({
       name: Joi.string().required(),
       crn: Joi.string().allow(''),
+      deliveryMethod: Joi.string()
+        .valid(...Object.values(DeliveryMethod))
+        .default(DeliveryMethod.TBD),
       memo: Joi.string().allow(''),
       contacts: Joi.array().items(
         Joi.object({
@@ -44,9 +51,9 @@ export const createAccountsValidation = celebrate({
           email: Joi.string().email().allow(''),
           address: Joi.string().allow(''),
           memo: Joi.string().allow(''),
-        })
+        }),
       ),
-    })
+    }),
   ),
 });
 
@@ -57,6 +64,9 @@ export const updateAccountValidation = celebrate({
   [Segments.BODY]: Joi.object({
     name: Joi.string(),
     crn: Joi.string().allow(''),
+    deliveryMethod: Joi.string()
+      .valid(...Object.values(DeliveryMethod))
+      .default(DeliveryMethod.TBD),
     memo: Joi.string().allow(''),
     contacts: Joi.array().items(
       Joi.object({
@@ -72,7 +82,7 @@ export const updateAccountValidation = celebrate({
         createdAt: Joi.date().allow(null),
         updatedAt: Joi.date().allow(null),
         deletedAt: Joi.date().allow(null),
-      })
+      }),
     ),
     contactsToCreate: Joi.array().items(
       Joi.object({
@@ -83,7 +93,7 @@ export const updateAccountValidation = celebrate({
         email: Joi.string().email().allow(''),
         address: Joi.string().allow(''),
         memo: Joi.string().allow(''),
-      })
+      }),
     ),
     contactIdsToDelete: Joi.array().items(Joi.number().integer()),
     createdAt: Joi.date(),

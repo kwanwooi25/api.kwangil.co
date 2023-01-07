@@ -45,6 +45,7 @@ model Account {
   id         Int         @id @default(autoincrement())
   name       String      @unique
   crn        String?     @default("")
+  deliveryMethod DeliveryMethod? @default(TBD)
   memo       String?     @default("")
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
