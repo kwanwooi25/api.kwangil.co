@@ -14,7 +14,7 @@ import {
 import { prisma } from '~prisma';
 import { getHasMore } from '~utils/response';
 
-import { Prisma, Product } from '@prisma/client';
+import { DeliveryMethod, Prisma, Product } from '@prisma/client';
 
 @Service()
 export default class ProductService {
@@ -206,6 +206,26 @@ export default class ProductService {
           images: true,
         },
       });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  public async updateDeliveryMethodByAccountId(
+    accountId: number,
+    userInput: { deliveryMethod: DeliveryMethod },
+  ): Promise<number> {
+    try {
+      const { deliveryMethod } = userInput;
+
+      logger.debug('... Updating the products of account %o', accountId);
+      const { count } = await prisma.product.updateMany({
+        where: { accountId },
+        data: {
+          deliveryMethod,
+        },
+      });
+      return count;
     } catch (error) {
       throw error;
     }

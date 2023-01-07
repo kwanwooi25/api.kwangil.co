@@ -56,8 +56,27 @@ export const createProducts = async (req: Request, res: Response, next: NextFunc
 
 export const updateProduct = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const updatedProduct = await Container.get(ProductService).updateProduct(+req.params.id, req.body);
+    const updatedProduct = await Container.get(ProductService).updateProduct(
+      +req.params.id,
+      req.body,
+    );
     return res.status(HttpStatus.OK).json(updatedProduct);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateDeliveryMethodByAccountId = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const count = await Container.get(ProductService).updateDeliveryMethodByAccountId(
+      +req.params.accountId,
+      req.body,
+    );
+    return res.status(HttpStatus.OK).json(count);
   } catch (error) {
     next(error);
   }

@@ -156,6 +156,17 @@ export const updateProductValidation = celebrate({
   }),
 });
 
+export const updateDeliveryMethodByAccountIdValidation = celebrate({
+  [Segments.PARAMS]: Joi.object({
+    accountId: Joi.number().integer().required(),
+  }),
+  [Segments.BODY]: Joi.object({
+    deliveryMethod: Joi.string()
+      .valid(...Object.values(DeliveryMethod))
+      .default(DeliveryMethod.TBD),
+  }),
+});
+
 export const deleteProductsValidation = celebrate({
   [Segments.QUERY]: Joi.object({
     ids: Joi.array().items(Joi.number().integer()).required(),
