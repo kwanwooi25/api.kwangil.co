@@ -206,6 +206,7 @@ model WorkOrder {
   workOrderStatus   WorkOrderStatus @default(NOT_STARTED)
   completedAt       DateTime?
   completedQuantity Int?
+  cuttingMachine    String?         @default("") @db.VarChar(255)
   deliveredAt       DateTime?
   deliveredQuantity Int?
   accountId         Int

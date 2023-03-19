@@ -280,7 +280,14 @@ export default class WorkOrderService {
   public async completeWorkOrders(workOrders: WorkOrderCompleteInput[]): Promise<WorkOrder[]> {
     return await Promise.all(
       workOrders.map(
-        async ({ id, completedQuantity = 0, completedAt, workOrderStatus, productId }) => {
+        async ({
+          id,
+          completedQuantity = 0,
+          completedAt,
+          workOrderStatus,
+          cuttingMachine,
+          productId,
+        }) => {
           // const workOrder = await prisma.workOrder.findUnique({ where: { id } });
           // let stock = await prisma.stock.findFirst({ where: { productId } });
           // const quantity = completedQuantity - (workOrder?.completedQuantity || 0);
@@ -325,7 +332,7 @@ export default class WorkOrderService {
 
           return await prisma.workOrder.update({
             where: { id },
-            data: { completedAt, completedQuantity, workOrderStatus },
+            data: { completedAt, completedQuantity, cuttingMachine, workOrderStatus },
             include: this.baseInclude,
           });
         },

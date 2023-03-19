@@ -39,6 +39,7 @@ export interface WorkOrderCompleteInput {
   id: string;
   completedAt: Date | string | null;
   completedQuantity: number;
+  cuttingMachine: string;
   workOrderStatus: WorkOrderStatus;
   productId: number;
 }
