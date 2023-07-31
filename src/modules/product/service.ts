@@ -119,6 +119,7 @@ export default class ProductService {
         account: true,
         images: true,
         workOrders: true,
+        plates: true,
       },
       orderBy: [
         { account: { name: 'asc' } },
