@@ -198,6 +198,7 @@ model WorkOrder {
   isUrgent          Boolean         @default(false)
   shouldBePunctual  Boolean         @default(false)
   shouldKeepRemainder  Boolean         @default(false)
+  shouldDeliverAll  Boolean         @default(false)
   plateStatus       PlateStatus     @default(CONFIRM)
   isPlateReady      Boolean         @default(false)
   deliveryMethod    DeliveryMethod  @default(TBD)
