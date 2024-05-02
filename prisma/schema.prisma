@@ -195,6 +195,7 @@ model WorkOrder {
   orderUpdatedAt    DateTime        @updatedAt
   deliverBy         DateTime
   orderQuantity     Int
+  deliveryQuantity  Int             @default(0)
   isUrgent          Boolean         @default(false)
   shouldBePunctual  Boolean         @default(false)
   shouldKeepRemainder  Boolean         @default(false)
