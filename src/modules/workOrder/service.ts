@@ -332,7 +332,7 @@ export default class WorkOrderService {
 
           return await prisma.workOrder.update({
             where: { id },
-            data: { completedAt, completedQuantity, cuttingMachine, workOrderStatus },
+            data: { completedAt, completedQuantity, cuttingMachine, workOrderStatus: 'COMPLETED' },
             include: this.baseInclude,
           });
         },
